@@ -1,0 +1,46 @@
+ESTHER XIN - GITHUB PAGES
+
+Open index.html locally to preview the site. No installation or build is needed.
+The site uses local assets, system fonts, lightweight tab-switching JavaScript,
+and no analytics. Without JavaScript, both work sections remain readable.
+
+PUBLISH
+1. Create a public repository named ethxin0011.github.io under ethxin0011.
+2. Upload the CONTENTS of this folder to the repository root, preserving assets/.
+   index.html must be at the root, not inside an extra folder.
+3. In repository Settings > Pages:
+   Source: Deploy from a branch
+   Branch: main
+   Folder: /(root)
+4. Save and wait for deployment to succeed.
+5. Verify https://ethxin0011.github.io/ in a signed-out browser.
+6. Check the photo, full-size diagram, paper links, and mobile layout.
+
+EDIT
+- index.html: bio, paper findings and Data & method summaries, project and contact.
+- styles.css: typography, spacing and responsive layout.
+- tabs.js: Research/Engineering switching, keyboard navigation and section links.
+- assets/portrait.jpg: resized portrait; source identity/location metadata removed.
+- assets/signoff-workflow.svg: public-facing architecture overview.
+
+CONTENT NOTES
+- The six linked articles are arXiv preprints; visible publication-status badges
+  are omitted for a quieter layout. Dates and paper links remain.
+- Paper summaries lead with findings; Data & method gives dataset size and protocol.
+- Counts distinguish corpus-specific items, answer options, verdicts, and rollout groups.
+- Independent research is distinguished from employment at Microsoft.
+- The project is listed as shipped based on the owner's confirmation.
+- 10 to 3 days is a 70% reduction in time to resolution, NOT an 80%
+  developer-hours saving.
+- Over 60% automated workflow steps is a separate operational measure.
+- Measurement scope supplied by the owner: 400 cases over six months.
+- No internal DOCX, SharePoint link, or original internal diagram is included.
+- The second project and downloadable CV are omitted until their content is ready.
+- Public contact cards: estherxin0011@gmail.com (Personal) and
+  yixin@microsoft.com (Work).
+
+BEFORE PUBLICATION
+Review the final public summaries and diagram against employer disclosure rules.
+Adding a website does not make independent research employer-sponsored.
+When adding a CV, use a public-approved/redacted PDF and update the page link.
+Do not add private references, addresses, credentials, or internal system links.

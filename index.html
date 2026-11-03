@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Esther Xin: Software Engineer and AI Researcher working on LLM data pipelines, evaluation infrastructure, and pretraining optimization.">
+  <meta name="theme-color" content="#ffffff">
+  <title>Esther Xin | ML Systems &amp; LLM Research</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="tabs.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="wordmark" href="#about">Esther Xin</a>
+    <nav aria-label="Main navigation">
+      <a href="#research">Research</a>
+      <a href="#engineering">Engineering</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="intro" id="about" aria-labelledby="intro-title">
+      <img class="portrait" src="assets/portrait.jpg" alt="Portrait of Esther Xin" width="600" height="671" fetchpriority="high">
+      <div>
+        <p class="eyebrow">Software Engineer &amp; AI Researcher</p>
+        <h1 id="intro-title">Esther Xin</h1>
+        <p class="intro-lead">LLM data pipelines.<br>Evaluation infrastructure.</p>
+        <p>I combine data-pipeline engineering with empirical research on LLM training-data quality, reward and verifier reliability, and scaling-aware evaluation. My research also includes controlled MoE pretraining experiments.</p>
+        <p>I am a Software Engineer II at Microsoft and bring five years of data-pipeline experience. I have led architecture and deployment of production workflows combining evidence processing, specialist agents, report validation, and human review.</p>
+        <div class="links" aria-label="Profile and contact links">
+          <a href="#contact">Email <span aria-hidden="true">&#8599;</span></a>
+          <a href="https://www.linkedin.com/in/esther-xin" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">&#8599;</span></a>
+          <a href="https://github.com/ethxin0011" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">&#8599;</span></a>
+        </div>
+      </div>
+    </section>
+
+    <div class="work-tabs" id="work-tabs" role="tablist" aria-label="Selected work" hidden>
+      <button class="work-tab" id="tab-research" type="button" role="tab" aria-controls="research" aria-selected="true">Selected Research</button>
+      <button class="work-tab" id="tab-engineering" type="button" role="tab" aria-controls="engineering" aria-selected="false" tabindex="-1">Selected Engineering</button>
+    </div>
+
+    <section class="section work-panel" id="research" aria-labelledby="research-title">
+      <div class="section-heading panel-heading">
+        <h2 id="research-title">Selected research</h2>
+      </div>
+
+      <div class="research-thread">
+        <h3>Pretraining optimization &amp; scaling-aware evaluation</h3>
+        <article class="paper">
+          <p class="paper-date"><time datetime="2026-11">November 2026</time></p>
+          <h4><a href="https://arxiv.org/abs/2611.02529">Tune the Baseline First: Most of Muon's Scaled Weight Decay Gain Is a Tuning Gap, but Its Small Real Advantage Grows With Model Size</a></h4>
+          <p class="paper-findings">At the smallest scale, joint tuning reduced Muon-SW's advantage from 0.035 to 0.0026 BPB&mdash;about 90% of the gap disappeared (95% CI: 0.0018&ndash;0.0034). The surviving share rose from roughly 10% to 21% across the tested ladder; larger-rung estimates use single-seed sweeps.</p>
+          <div class="paper-method">
+            <h5>Data &amp; method</h5>
+            <p>81 runs across 3 MoE rungs, 1.9M&ndash;15M active parameters; source-scaled data and joint LR/WD tuning, with 4 paired seeds at the smallest tuned rung.</p>
+          </div>
+          <p class="paper-links"><a href="https://arxiv.org/abs/2611.02529">Paper</a><a href="https://github.com/ethxin0011/weight_decay_ladder" target="_blank" rel="noopener noreferrer">Code &amp; results</a></p>
+        </article>
+        <article class="paper">
+          <p class="paper-date"><time datetime="2026-10">October 2026</time></p>
+          <h4><a href="https://arxiv.org/abs/2610.38433">Does Chain-of-Thought Reliance Follow a Scaling Law? Larger Models Follow Their Steps More, Independent of Post-Training</a></h4>
+          <p class="paper-findings">On synthetic box-swap tasks, Qwen3 answer reliance on written reasoning rose from 16&ndash;18% at 0.6B to 97&ndash;100% at 14B. Reliance correlated with step accuracy (r = 0.99); base/post-trained Qwen3 differences were at most 0.03 from 4B upward.</p>
+          <div class="paper-method">
+            <h5>Data &amp; method</h5>
+            <p>25 open-weight models/checkpoints from 4 families, 7,200 evaluation items each; exact-ground-truth tasks and controlled CoT edits, inference only.</p>
+          </div>
+          <p class="paper-links"><a href="https://arxiv.org/abs/2610.38433">Paper</a><a href="https://github.com/ethxin0011/cot-scale-reliance" target="_blank" rel="noopener noreferrer">Code &amp; results</a></p>
+        </article>
+      </div>
+
+      <div class="research-thread">
+        <h3>RLVR post-training: data quality &amp; reward reliability</h3>
+        <article class="paper">
+          <p class="paper-date"><time datetime="2026-10">October 2026</time></p>
+          <h4><a href="https://arxiv.org/abs/2610.21229">What Should We Remove? Evaluating the Reliability and Costs of RLVR Data Decontamination</a></h4>
+          <p class="paper-findings">No tested semantic threshold met the 90% conservative-precision target on calibration. The existing judge-adjudicated policy achieved 98.1% resolved precision and 98.2% candidate-frame recall on held-out corpora&mdash;not corpus-wide recall.</p>
+          <div class="paper-method">
+            <h5>Data &amp; method</h5>
+            <p>16 corpora with 1,673,514 corpus-specific items, 6 benchmarks, 8 policies, and 594 blinded dual-reviewed pairs; disjoint calibration/held-out sets.</p>
+          </div>
+          <p class="paper-links"><a href="https://arxiv.org/abs/2610.21229">Paper</a><a href="https://github.com/ethxin0011/rlvr_data_contamination" target="_blank" rel="noopener noreferrer">Code &amp; results</a></p>
+        </article>
+        <article class="paper">
+          <p class="paper-date"><time datetime="2026-09">September 2026</time></p>
+          <h4><a href="https://arxiv.org/abs/2610.00202">When a Data Artifact Isn't a Shortcut: Causal Auditing of Synthetic RLVR Corpora</a></h4>
+          <p class="paper-findings">Surface features weakly distinguished answer provenance (AUROC 0.562), but the unmodified-data policy showed no exploitation advantage: gaps were 0.021 vs. 0.027 for the matched control. A detectable artifact was not shown to be exploited under the tested budget.</p>
+          <div class="paper-method">
+            <h5>Data &amp; method</h5>
+            <p>315,499 GooseReason-0.7M answer options, 5 surface features, and 2 policy-training arms with equal dataset sizes and a fixed budget; paraphrase-matched control.</p>
+          </div>
+          <p class="paper-links"><a href="https://arxiv.org/abs/2610.00202">Paper</a><a href="https://github.com/ethxin0011/rlvr_authenticity_audit" target="_blank" rel="noopener noreferrer">Code &amp; results</a></p>
+        </article>
+        <article class="paper">
+          <p class="paper-date"><time datetime="2026-09">September 2026</time></p>
+          <h4><a href="https://arxiv.org/abs/2609.06386">Are Verifier Errors Independent Within a GRPO Group? Evidence from Qwen2.5 Rollouts</a></h4>
+          <p class="paper-findings">Within-group verifier-error correlation was 0.530 (95% CI: 0.500&ndash;0.560), implying 1.70 effective samples per group of 8 under an exchangeable-error model. Advantage-sign disagreements affected up to 0.83% of groups; shared prompt difficulty and answer form were not disentangled.</p>
+          <div class="paper-method">
+            <h5>Data &amp; method</h5>
+            <p>24,998 groups of 8 Qwen2.5-1.5B completions across MATH, GSM8K, and DeepMath-103K; correlation estimation and advantage replay across 4 rule-verifier configurations.</p>
+          </div>
+          <p class="paper-links"><a href="https://arxiv.org/abs/2609.06386">Paper</a><a href="https://github.com/ethxin0011/rlvr_group_correlation" target="_blank" rel="noopener noreferrer">Code &amp; results</a></p>
+        </article>
+        <article class="paper">
+          <p class="paper-date"><time datetime="2026-09">September 2026</time></p>
+          <h4><a href="https://arxiv.org/abs/2609.01354">Where the Verifier Fails: A Category-Level Audit of Reward Signals in RLVR</a></h4>
+          <p class="paper-findings">Self-validation ranged from 53.8% to 95.2%; two same-library configurations disagreed on 49.9% of pairs. Whitespace/punctuation caused 93.0% of default LaTeX in-contract failures; the reference numeric cascade accepted all tested off-by-one cases at magnitudes &ge;10<sup>4</sup>.</p>
+          <div class="paper-method">
+            <h5>Data &amp; method</h5>
+            <p>307,420 verdicts across 4 verifier implementations; certified-equivalent and adversarial answer transformations, with category-level audits separating rejection from execution failure.</p>
+          </div>
+          <p class="paper-links"><a href="https://arxiv.org/abs/2609.01354">Paper</a><a href="https://github.com/ethxin0011/verifier-error-budget" target="_blank" rel="noopener noreferrer">Code &amp; results</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section work-panel" id="engineering" aria-labelledby="engineering-title">
+      <div class="section-heading panel-heading">
+        <h2 id="engineering-title">Selected engineering</h2>
+        <span class="section-note">Production systems</span>
+      </div>
+      <p class="section-description">Engineering delivery alongside independent research, with an emphasis on evidence, reliability, and human decision boundaries.</p>
+      <article class="project">
+        <p class="paper-date">Microsoft &middot; Project lead &middot; Shipped</p>
+        <h3>Performance Signoff Multi-Agent System</h3>
+        <p>Led architecture, deployment, and iterative refinement of a production performance-investigation workflow. A router prepares shared evidence, parallel specialist agents investigate performance signals, and a critique stage validates the report before publication. The final signoff decision remains with a human reviewer.</p>
+        <dl class="project-metrics">
+          <div><dt>10 &rarr; 3 days</dt><dd>Time to resolution<br><span>70% reduction</span></dd></div>
+          <div><dt>&gt;60%</dt><dd>Previously manual<br>workflow steps automated</dd></div>
+          <div><dt>400 cases</dt><dd>Six-month<br>measurement period</dd></div>
+        </dl>
+        <figure class="architecture">
+          <a href="assets/signoff-workflow.svg" aria-label="Open the full-size performance signoff architecture diagram">
+            <img src="assets/signoff-workflow.svg" alt="Evidence intake flows to a router and four parallel specialists, then critique and validation, controlled report publication, human review, and an audit record. Feedback returns to routing." width="1080" height="700" loading="lazy">
+          </a>
+          <figcaption>Public-facing architecture overview; internal service names omitted. <a href="assets/signoff-workflow.svg">View full size</a>.</figcaption>
+        </figure>
+        <p class="project-note">Operational results reported for a 400-case, six-month measurement. Time to resolution and workflow-step automation are distinct measures; neither is presented as a developer-hours saving.</p>
+      </article>
+    </section>
+
+    <section class="section contact" id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contact</h2>
+      <p>For conversations about LLM training systems, data quality, and evaluation reliability:</p>
+      <div class="contact-emails">
+        <a class="email-card" href="mailto:estherxin0011@gmail.com">
+          <span class="email-label">Personal</span>
+          <span class="contact-email">estherxin0011@gmail.com</span>
+        </a>
+        <a class="email-card" href="mailto:yixin@microsoft.com">
+          <span class="email-label">Work</span>
+          <span class="contact-email">yixin@microsoft.com</span>
+        </a>
+      </div>
+      <div class="links">
+        <a href="https://www.linkedin.com/in/esther-xin" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/ethxin0011" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <span>Esther Xin</span>
+    <span>Independent research &middot; Last updated November 2026</span>
+  </footer>
+</body>
+</html>
