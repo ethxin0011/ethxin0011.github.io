@@ -10,12 +10,13 @@
   <script src="tabs.js" defer></script>
   <style>
     .smile-rail {
-      --smile-size: min(132px, 21vh);
+      --smile-size: min(44px, 7vh);
       position: fixed;
       top: 4vh;
       right: 12px;
       width: var(--smile-size);
-      height: max(36vh, calc(4 * var(--smile-size) + 24px));
+      height: 36vh;
+      max-height: 300px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -57,14 +58,12 @@
       transition: opacity 160ms ease;
     }
     .smile-button:is(:hover, :focus) .smile-tooltip { opacity: 1; visibility: visible; }
-    @media (max-width: 1360px) {
-      .site-header, main, footer { width: calc(100% - 240px); margin-inline: 24px 216px; }
+    @media (max-width: 1120px) {
+      .site-header, main, footer { width: calc(100% - 112px); margin-inline: 24px 88px; }
     }
     @media (max-width: 680px) {
-      .smile-rail { --smile-size: min(96px, 21vh); right: 6px; }
-      .site-header, main, footer { width: calc(100% - 160px); margin-inline: 20px 140px; }
-      .site-header nav { flex-wrap: wrap; max-width: 100%; }
-      main, footer { overflow-wrap: anywhere; }
+      .smile-rail { --smile-size: min(32px, 7vh); right: 6px; }
+      .site-header, main, footer { width: calc(100% - 80px); margin-inline: 20px 60px; }
       .portrait { max-width: 100%; }
     }
     @media (prefers-reduced-motion: reduce) {
