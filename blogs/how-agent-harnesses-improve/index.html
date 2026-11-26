@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="How production coding agents improve with human engineering and evals, and how research explores automating that loop.">
+  <meta name="theme-color" content="#ffffff">
+  <title>How Agent Harnesses Improve: Real-World Human Engineering vs. Research | Esther Xin</title>
+  <link rel="canonical" href="https://ethxin0011.github.io/blogs/how-agent-harnesses-improve/">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="wordmark" href="../../">Home</a>
+    <nav aria-label="Main navigation">
+      <a href="../">Blogs</a>
+      <a href="../../#research">Research</a>
+      <a href="../../#engineering">Engineering</a>
+      <a href="../../#contact">Contact</a>
+    </nav>
+  </header>
+  <main id="main" class="blog-article">
+    <article>
+      <header class="article-masthead">
+        <a class="article-back" href="../"><span aria-hidden="true">&larr;</span> All blogs</a>
+        <p class="eyebrow">AI engineering</p>
+        <h1>How Agent Harnesses Improve: Real-World Human Engineering vs. Research</h1>
+        <p class="article-byline">By Esther Xin</p>
+      </header>
+
+      <div class="article-body">
+        <p class="article-subtitle"><strong>(Copilot, Claude Code, Codex vs. Latest Harness Research)</strong></p>
+
+        <figure class="article-diagram">
+          <a href="../../assets/blogs/agent-harnesses-diagram.png" target="_blank" rel="noopener" aria-label="Open the full-size harness comparison diagram (opens in a new tab)">
+            <img src="../../assets/blogs/agent-harnesses-diagram.png" alt="Two-column diagram: production harnesses follow an engineer-led, eval-gated loop; five research tracks use an automated outer loop to propose and test changes." width="904" height="768">
+          </a>
+        </figure>
+
+        <section>
+          <h2>VS Code GitHub Copilot</h2>
+          <p><strong>Design:</strong> Engineers craft the shared <strong>Copilot SDK</strong> harness—prompts from rules, workspace, history, and memory; tools (replace_string_in_file vs. apply_patch) set per model; MCP, extensions, and .<a href="https://www.linkedin.com/safety/go/?url=http%3A%2F%2Fagent%2Emd&amp;urlhash=718C&amp;mt=vFod8VrwX3qS6gr0_3cq4rOpJFnfHNlKmxC_lxU80yVKhdj1jZu07fQgKoVUYFUBCzkL1PJ1jeXCu6FcNAwqkZGRP3X93CGRD4VsOR03iYcNx9ghAEbIFYq7bwyMuFMOgvA0jh7puVJVr1QzLx_YrScO40quE4ZyeRsYpvMPaJKzoyHWGfF0VEDUO4qi7oUiZg&amp;isSdui=true"><strong>agent.md</strong></a> controls in an Agent Host. Automated: <strong>Copilot Fusion</strong> picks models, assisted permissions risk-score tool calls, and the runtime enforces sandbox policy.</p>
+          <p><strong>How it improves:</strong> Engineers decide changes with model providers and user feedback. Automated: <strong>VSC-Bench</strong> and a smoke test (50k+ runs, 30 models) catch regressions; staged rollouts stream telemetry—14.2% fewer tokens, 9.6% lower cost vs. the Local harness.</p>
+        </section>
+
+        <section>
+          <h2>Claude Code</h2>
+          <p><strong>Design:</strong> Engineers built a minimal bash + text-editor loop with edit, approval, and UI tools, <a href="https://www.linkedin.com/safety/go/?url=http%3A%2F%2FCLAUDE%2Emd&amp;urlhash=onXc&amp;mt=RG8Gn3IE9Gru4mb3sz8pkz4vXh4lGx1ePmL5kWk3xaNHP10DT97Nj9aRNF6BJ0p8pu75-fF_paUfgDZAxKjJoDrct7FwQLi0-jGG2l4jeSO4bYSJhRm9SLoOe3wwFKGXHm-05TEaq_nJIJJVoOe3M392oAeOjFRL14hsbCWNmyJwNGYj32ow5okOo0w7-R-_tw&amp;isSdui=true"><strong>CLAUDE.md</strong></a> memory, and subagents. Automated: compaction, auto memory, and <strong>auto mode</strong>—classifiers and internal cook books and close-end pipelines reviewing each action plus a prompt-injection probe.</p>
+          <p><strong>How it improves:</strong> Engineers strip stale scaffolding as models advance. Automated: internal evals and an incident log—but both missed 3 spring 2026 regressions (lower default effort, a thinking-clearing bug, a verbosity prompt); engineers traced user reports and fixed all 3 by April 20.</p>
+        </section>
+
+        <section>
+          <h2>Codex</h2>
+          <p><strong>Design:</strong> Engineers built the open-source <strong>Codex core</strong> (loop, threads, sandboxed tools/MCP) and a JSON-RPC <strong>App Server</strong> powering CLI, IDE, web, and macOS. Automated: compaction, retained reasoning, and sandbox/approval policy.</p>
+          <p><strong>How it improves:</strong> Engineers tune default prompts and <strong>apply_patch</strong> (V4A diffs) by hand. Automated: internal evals score accuracy, tool use, and bias to action; retained reasoning + compaction lifted <strong>GPT-5.6 Sol</strong> on ARC-AGI-3 from 13.3% → 38.3% with ~6× fewer tokens. Third parties report Codex models are post-trained on this loop.</p>
+        </section>
+
+        <section>
+          <h2>Where Harness Research Is Heading (2026 Frontier)</h2>
+          <p>Instead of human-led PRs, recent research automates harness evolution across 5 main tracks:</p>
+          <ul>
+            <li><strong>End-to-End Harness Search (Meta-Harness):</strong> LLMs search over prompts, tools, and execution code using rollout traces—matching hand-built harnesses.</li>
+            <li><strong>Observability-Driven Evolution (AHE):</strong> Tracks file-level diffs, distilled traces, and falsifiable predictions per edit for safe rollback.</li>
+            <li><strong>Regularized Evolution (RRSI):</strong> Caps edit budgets to prevent prompt bloat and cut policy tokens (~30% fewer).</li>
+            <li><strong>Continual Memory (SIM, Google, arXiv:2611.18856v1):</strong> Gives the optimizer a changelog of edit rationale and test outcomes so harnesses adapt across new models or datasets.</li>
+            <li><strong>Declarative &amp; Co-Training (DSPy/GEPA, SIA):</strong> Optimizes prompts mathematically or post-trains model weights jointly with the harness.</li>
+          </ul>
+        </section>
+
+        <p class="article-takeaway"><strong>Takeaway:</strong> Production agents prioritize reliability, safety, and eval-gated PRs; research explores how to automate and remember those improvements. Ultimately self-improvement will automate many of it as AI can optimize anything.</p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <span>Esther Xin</span>
+    <a href="../">All blogs</a>
+  </footer>
+</body>
+</html>
