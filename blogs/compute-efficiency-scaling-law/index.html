@@ -29,7 +29,122 @@
         <p class="article-byline">By Esther Xin</p>
       </header>
       <div class="article-body">
-        <p class="article-subtitle">Full article coming soon.</p>
+        <p class="article-subtitle"><em>MAI-Base-2 reaches the quality of the strongest open base model with 4&ndash;12&times; less training compute, measured with bits-per-byte, a score that treats every model fairly.</em></p>
+
+        <section>
+          <h2>Two ways to make a model smarter</h2>
+          <p><strong>Spend more:</strong></p>
+          <p>Train a bigger model on more data with more computing power. This is the classic scaling law: more compute generally produces a better model.</p>
+          <p><strong>Spend better:</strong></p>
+          <p>Get more quality from each unit of compute by improving the architecture, the data, how stable training is and how fully the hardware is used. Spending more still works, but spending better adds up over time. The compute needed to reach a given capability level has been falling about <strong>3&times; per year</strong> as methods improve. As a result, how well a lab uses its compute now matters about as much as how much compute it has.</p>
+        </section>
+
+        <section>
+          <h2>The hard part: measuring "better" fairly</h2>
+          <ul>
+            <li><strong>Benchmarks wear out.</strong> Task tests become outdated quickly. Many tests from the GPT-3 era were close to maxed out by the time GPT-4 arrived.</li>
+            <li><strong>Prediction loss tracks the core skill.</strong> Pretraining teaches a model one job: predict the next piece of text. <strong>Loss</strong>, or <strong>perplexity</strong>, measures how good those predictions are on held-out text the model never trained on. Lower is better.</li>
+            <li><strong>Loss per token isn't comparable across models.</strong> Models break text into tokens differently, so the same sentence can become 2 tokens in one model and 3 in another. A model can look better per token simply because it splits the text differently.</li>
+          </ul>
+          <p style="margin-top: 14px;"><strong>The fix: bits-per-byte (BPB)</strong> BPB measures the same prediction quality, but it divides by the <strong>bytes of text</strong> instead of the number of tokens. That makes it <strong>tokenizer-agnostic</strong>: a version of perplexity that every model can be scored on in the same way. It also has a simple meaning. It is the number of bits a model needs to compress each byte of text, so lower is better.</p>
+        </section>
+
+        <figure class="article-diagram">
+          <a href="../../assets/blogs/blog4-image1.png" target="_blank" rel="noopener" aria-label="Open full-size bits-per-byte comparison diagram (opens in a new tab)">
+            <img src="../../assets/blogs/blog4-image1.png" alt="Comparison of per-token loss versus tokenizer-agnostic bits-per-byte (BPB) across two models predicting the same 8 bytes." width="1927" height="838">
+          </a>
+          <figcaption><em>Two models predict the same 8 bytes equally well. Per token, Model B looks better (2.0 vs. 3.0). Per byte, both score 1.08.</em></figcaption>
+        </figure>
+
+        <section>
+          <h2>How top labs measure progress</h2>
+          <ul>
+            <li><strong>OpenAI: proposes perplexity as a shared yardstick.</strong> In a November 2026 post, Chief Scientist Jakub Pachocki argued that labs should use perplexity to compare progress and to set shared safety standards. He also published OpenAI's own internal measurements. He reports that GPT-3.5 scored about 0.99, GPT-4 about 0.91, and that new capabilities in cybersecurity and math appeared once OpenAI's models fell below 0.8. METR, an independent research group, analyzed the curve and estimated that loss has been falling about <strong>7&times; faster since early 2026</strong> than it did from 2022 to 2025. OpenAI's numbers are in <strong>log-perplexity measured on its own held-out codebase</strong>, so they can't be compared directly with other labs' numbers.</li>
+            <li><strong>Anthropic: calls for limits based on a shared measure.</strong> CEO Dario Amodei published a plan to "pace the frontier," calling for common safety standards and limits on unchecked AI progress. A limit on the pace of progress only works if labs agree on how to measure that pace, which is the gap Pachocki's proposal aims to fill.</li>
+            <li><strong>Google DeepMind: builds efficient models from its strongest ones.</strong> Gemini 4 Hydrogen, positioned for speed and efficiency in everyday agentic work, is <strong>adapted from Gemini 4 Carbon</strong>. Carbon is itself based on Gemini 4 Argon. Building on its own frontier models gets more value from compute DeepMind has already spent.</li>
+            <li><strong>The shared direction:</strong> progress is increasingly measured by <strong>prediction quality on held-out data</strong>, not just by benchmark scores.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>MAI: same principle, measured fairly across models</h2>
+          <p><strong>What it is:</strong> MAI-Base-2 is a mixture-of-experts (MoE) base model with <strong>80B active and 2.8T total parameters</strong>. It was trained on <strong>16k GB200 GPUs over 38 days</strong>.</p>
+          <p><strong>How it's measured:</strong> MAI compares pretrained models using <strong>BPB on held-out text</strong>, so models with different tokenizers can be compared on equal terms. Code is evaluated on MAI's own codebase. STEM, math and Q&amp;A test sets are <strong>commissioned from vendors</strong>, and all evaluation sets are <strong>decontaminated</strong> against MAI's training data. This matters because a model shows misleadingly low loss on text it has already seen.</p>
+          <p><strong>Result:</strong> According to MAI, MAI-Base-2 <strong>outperforms every open-weight model it tested</strong> on held-out evaluations and is <strong>4&ndash;12&times; more pretraining-FLOPs-efficient</strong> than DeepSeek-V4-Pro-Base, the strongest open base model. MAI put the compute it saved into training a larger model.</p>
+        </section>
+
+        <figure class="article-diagram">
+          <a href="../../assets/blogs/blog4-image2.png" target="_blank" rel="noopener" aria-label="Open full-size MAI-Base-2 compute efficiency chart (opens in a new tab)">
+            <img src="../../assets/blogs/blog4-image2.png" alt="Chart showing MAI-Base-2 pretraining compute efficiency and bits-per-byte comparison against open base models." width="1620" height="682">
+          </a>
+        </figure>
+
+        <section>
+          <h2>What made it possible</h2>
+          <ul>
+            <li><strong>Scaling science:</strong> Small "scaling ladder" experiments that account for repeated training data, plus measured rules for choosing training settings, so the large run could be planned in advance.</li>
+            <li><strong>Model and infrastructure designed together:</strong> Improved MoE and Muon optimizer implementations, and activation gradient clipping to keep training stable.</li>
+            <li><strong>More data:</strong> Expanded data pipelines and added vision data.</li>
+            <li><strong>Hardware use:</strong> <strong>21% MFU</strong>, the share of the GPUs' peak speed spent on useful model math, and <strong>89% goodput</strong>, the share of time training actually made progress.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>How the approaches compare</h2>
+          <div class="article-table-wrap">
+            <table class="article-table">
+              <thead>
+                <tr>
+                  <th>Lab</th>
+                  <th>Main measure of progress</th>
+                  <th>Comparable across labs?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>OpenAI</td>
+                  <td>Log-perplexity on an internal held-out codebase</td>
+                  <td>Proposed as a shared standard; the numbers depend on OpenAI's own data and tokenizer</td>
+                </tr>
+                <tr>
+                  <td>Anthropic</td>
+                  <td>Calls for shared standards and limits on the pace of progress</td>
+                  <td>Depends on labs agreeing on a measure</td>
+                </tr>
+                <tr>
+                  <td>Google DeepMind</td>
+                  <td>Builds efficient models on top of its frontier models</td>
+                  <td>Efficiency is shown through task benchmarks</td>
+                </tr>
+                <tr>
+                  <td>MAI</td>
+                  <td>BPB on decontaminated, held-out evaluation sets</td>
+                  <td>Yes. BPB doesn't depend on the tokenizer, so it works across model families</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h2>Read the numbers carefully</h2>
+          <ul>
+            <li>Some of the models MAI compared against were available only after post-training, and MAI notes this may affect their scores.</li>
+            <li>BPB measures core language-modeling quality. Skills such as reasoning and tool use still need task-based tests.</li>
+            <li>The 4&ndash;12&times; figure comes from MAI's own measurements against a single reference model.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Why it matters for everyone</h2>
+          <ul>
+            <li><strong>Cost:</strong> Reaching the same quality with less compute makes models cheaper to build and to run.</li>
+            <li><strong>A shared yardstick:</strong> Prediction-based measures such as BPB and perplexity let labs track progress openly and set safety standards together.</li>
+            <li><strong>Room to grow:</strong> Compute that is saved can go into larger and better models.</li>
+          </ul>
+        </section>
+
+        <p class="article-takeaway"><strong>Takeaway:</strong> The top labs increasingly agree that prediction quality on held-out data is the clearest signal of progress. OpenAI has proposed it as an industry standard, and Anthropic has called for shared limits that depend on a common measure. MAI's version measures that quality with bits-per-byte on clean, held-out data, which makes it comparable across model families, and it reports a 4&ndash;12&times; compute advantage over the strongest open base model.</p>
       </div>
     </article>
   </main>
