@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MAI's three smart safeguards keep its model trying new ideas, step in before any big misstep and save progress after setbacks, lifting MAI-Thinking-1 to top-tier math results.">
+  <meta name="theme-color" content="#ffffff">
+  <title>Making Every RL Step Count: How MAI Keeps Accuracy Rising and Training Efficient | Esther Xin</title>
+  <link rel="canonical" href="https://ethxin0011.github.io/blogs/making-every-rl-step-count/">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="wordmark" href="../../">Home</a>
+    <nav aria-label="Main navigation">
+      <a href="../">Blogs</a>
+      <a href="../../#research">Research</a>
+      <a href="../../#engineering">Engineering</a>
+      <a href="../../#contact">Contact</a>
+    </nav>
+  </header>
+  <main id="main" class="blog-article">
+    <article>
+      <header class="article-masthead">
+        <a class="article-back" href="../"><span aria-hidden="true">&larr;</span> All blogs</a>
+        <p class="eyebrow">Post-training</p>
+        <h1>Making Every RL Step Count: How MAI Keeps Accuracy Rising and Training Efficient</h1>
+        <p class="article-byline">By Esther Xin</p>
+      </header>
+
+      <div class="article-body">
+        <p class="article-subtitle"><em>Reinforcement learning pays off when a model keeps improving for thousands of steps. MAI pairs the best of open research with precise, self-adjusting controls, so its models keep climbing steadily and bounce back quickly from any dip.</em></p>
+
+        <section>
+          <h2>The challenge MAI chose to master</h2>
+          <p>In reinforcement learning (RL), a model tries answers, gets a reward when it is right, and is nudged toward better-rewarded behavior. RL is only worth it if the model <strong>keeps getting better with every step, and holds on to what it gains</strong>. MAI has turned RL into reliable, compounding improvement with reduced costs.</p>
+          <p><strong>Why :</strong> A distilled model starts RL near its teacher's ceiling, so its RL is a short finishing step. MAI climbs from the <strong>base model through RL itself</strong>, so every skill is learned, not borrowed, and the model can keep rising past any teacher's limit. Making those long runs steady is where MAI's engineering shines.</p>
+          <p>On any long climb, three forces need to be kept in check, and MAI has an answer for each:</p>
+          <ul>
+            <li><strong>Exploration:</strong> a model needs to keep trying varied answers so learning never stalls.</li>
+            <li><strong>Update size:</strong> every step should move the model forward smoothly, without oversized jumps.</li>
+            <li><strong>Precision:</strong> the system that generates answers and the system that learns from them must stay in sync across thousands of updates.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Built on the best of open research</h2>
+          <p>MAI starts from the strongest proven foundations and takes them further:</p>
+          <ul>
+            <li><strong>GRPO (from DeepSeekMath):</strong> for each problem, the model writes several answers, compares their rewards within the group, and learns from the relative scores, with no separate scoring model.</li>
+            <li><strong>DAPO (ByteDance Seed, 2025):</strong> improved on plain GRPO to keep training steady and exploring. Its techniques include <strong>clip-higher</strong> (letting good, unlikely answers grow a bit more: an upper limit of 0.28 vs. 0.2 below), <strong>dynamic sampling</strong>, <strong>token-level loss</strong> and penalties for overlong answers.</li>
+          </ul>
+          <p style="margin-top: 12px;">MAI also uses token-level updates, then adds precise controls designed for climbs far longer than these recipes were built for.</p>
+        </section>
+
+        <section>
+          <h2>The clipping idea, in one line</h2>
+          <p>Each update compares how likely an answer is under the new model vs. the old one. That ratio is kept inside a safe range so no single step moves the model too far:</p>
+          <p><em>ratio = new probability &divide; old probability, kept between 1 &minus; &epsilon;(low) and 1 + &epsilon;(high)</em></p>
+        </section>
+
+        <section>
+          <h2>MAI's 3 smart controls</h2>
+          <p><strong>1. Entropy-responsive upper clip: a thermostat for exploration</strong></p>
+          <p>Where earlier recipes set the upper limit once, MAI makes it <strong>adjust itself</strong>: when the model's entropy (how varied its answers are) dips below a target, the limit widens to invite more exploration; when it rises above, the limit tightens. Exploration stays right where it should be, automatically.</p>
+
+          <p style="margin-top: 12px;"><strong>2. Outer ratio clip: a guardrail for extreme updates</strong></p>
+          <p>MAI spotted cases that standard GRPO-style clipping leaves open, where a rare update could grow very large, and closed them with an <strong>outer cap</strong>. MAI reports that this delivered <strong>fewer gradient spikes and more stable climbs</strong>.</p>
+
+          <p style="margin-top: 12px;"><strong>3. Self-distillation: progress that is never lost</strong></p>
+          <p>MAI turns the model's <strong>own RL answers</strong> into training data and fine-tunes on them. This carries everything the model has learned across a restart from an earlier checkpoint or a move to an updated base model, so RL picks up right where it left off. MAI calibrates how much to collect, keeping enough to lock in progress while leaving the model plenty of room to explore.</p>
+        </section>
+
+        <figure class="article-diagram">
+          <a href="../../assets/blogs/blog6-image1.png" target="_blank" rel="noopener" aria-label="Open full-size MAI RL stability controls diagram (opens in a new tab)">
+            <img src="../../assets/blogs/blog6-image1.png" alt="Diagram illustrating MAI's three RL stability controls: entropy-responsive upper clip, outer ratio clip, and self-distillation recovery." width="1926" height="1078">
+          </a>
+        </figure>
+
+        <section>
+          <h2>Two layers working together: algorithm and system</h2>
+          <p>The three controls keep the learning rule steady. MAI's in-house RL framework, <strong>Rocket</strong>, keeps the system around it just as precise:</p>
+          <ul>
+            <li><strong>On-time learning:</strong> agentic attempts can take hours, and GRPO scores answers as a group, so Rocket is designed to keep long-running attempts from holding training back.</li>
+            <li><strong>Numbers that match:</strong> as models grow and use lower-precision storage, Rocket focuses on keeping the answer-generating and learning systems numerically consistent.</li>
+          </ul>
+          <p style="margin-top: 12px;">MAI shares more on Rocket in <em>RL infrastructure at Microsoft AI</em>. This pairing of recipe and system carried MAI-Base-1 to MAI-Thinking-1 and is now post-training MAI-Base-2, entirely without distillation from third-party models.</p>
+        </section>
+
+        <section>
+          <h2>The proof: a climb that held</h2>
+          <p>The results speak through the curve. MAI-Thinking-1's RL scores rise steadily over thousands of steps on AIME 2025, hard LiveCodeBench v6 problems and SWE-bench Verified, in what MAI describes as sustained <strong>log-linear climbs</strong>. That climb carried the model to <strong>97.0%</strong> on AIME 2025, <strong>87.7%</strong> on LiveCodeBench v6 and <strong>52.8%</strong> on SWE-Bench Pro, placing it among the strongest models of its size.</p>
+        </section>
+
+        <section>
+          <h2>How top labs approach RL stability</h2>
+          <div class="article-table-wrap">
+            <table class="article-table">
+              <thead>
+                <tr>
+                  <th>Lab</th>
+                  <th>Main approach</th>
+                  <th>What it shows</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>MAI</td>
+                  <td>Entropy-responsive clip, outer ratio clip and self-distillation recovery, on the Rocket framework</td>
+                  <td>Complete stability stack: keeps runs steady, adapts on its own, and recovers fast, all for long climbs from a base model</td>
+                </tr>
+                <tr>
+                  <td>ByteDance Seed (DAPO)</td>
+                  <td>Clip-higher, dynamic sampling, token-level loss, overlong penalties</td>
+                  <td>Strong open recipe for steadier GRPO training; a foundation MAI extends</td>
+                </tr>
+                <tr>
+                  <td>Meta (ScaleRL)</td>
+                  <td>400,000+ GPU-hour study of RL design choices; one run scaled to 100,000 GPU-hours</td>
+                  <td>Stable recipes follow predictable curves, so small runs can forecast big ones</td>
+                </tr>
+                <tr>
+                  <td>Qwen (Alibaba)</td>
+                  <td>Importance-sampling correction, clipping and Routing Replay for MoE models</td>
+                  <td>Explains why these tricks stabilize RL, tested on a 30B MoE model</td>
+                </tr>
+                <tr>
+                  <td>OpenAI, Google DeepMind, Anthropic</td>
+                  <td>Few public details on their RL stability recipes</td>
+                  <td>Little shared publicly, which makes MAI's openness stand out</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h2>Where MAI stands out</h2>
+          <p>MAI covers every angle of stability: a control that <strong>adapts exploration on its own</strong>, a guardrail that <strong>keeps every update in range</strong>, and <strong>a built-in way to carry progress forward</strong> through any restart. Backed by a system built for sustained climbs, this is what lets MAI climb from a base model on its own learning.</p>
+        </section>
+
+        <section>
+          <h2>Smart engineering, openly shared</h2>
+          <ul>
+            <li>MAI combines the best open methods, GRPO and DAPO, with its own precise additions, tuned specifically for very long runs.</li>
+            <li>It publishes the details in its technical report, so others can learn from and build on the approach.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Why it matters for everyone</h2>
+          <ul>
+            <li><strong>Every GPU hour counts:</strong> a steady run turns compute straight into progress.</li>
+            <li><strong>Original skills:</strong> stable long climbs let a model learn on its own instead of copying a stronger model.</li>
+            <li><strong>Room to grow:</strong> a climb that stays steady can keep going, instead of stalling at a ceiling.</li>
+          </ul>
+        </section>
+
+        <p class="article-takeaway"><strong>Takeaway:</strong> Long RL runs reward precision. MAI builds on the best open methods and adds a self-adjusting clip, a guardrail for extreme updates and a built-in way to carry progress forward, all backed by infrastructure made for months-long climbs. That smart, efficient engineering is what keeps MAI's models climbing.</p>
+
+        <p style="margin-top: 20px; font-size: 13px; color: var(--muted);"><em>Sources: MAI-Thinking-1 technical report (Jun 2026); Microsoft AI, RL infrastructure at Microsoft AI (Nov 23, 2026); DAPO (arXiv 2503.14476); <strong>ScaleRL</strong> (arXiv 2510.13786); Qwen, Stabilizing RL with LLMs (arXiv 2512.01374).</em></p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <span>Esther Xin</span>
+    <a href="../">All blogs</a>
+  </footer>
+</body>
+</html>
