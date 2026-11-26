@@ -1,8 +1,10 @@
 ESTHER XIN - GITHUB PAGES
 
-Open index.html locally to preview the site. No installation or build is needed.
-The site uses local assets, system fonts, lightweight tab-switching JavaScript,
-and no analytics. Without JavaScript, both work sections remain readable.
+No installation or build is needed for publishing. To preview, serve the repo
+root with any static HTTP server (or use GitHub Pages); opening index.html from
+disk does not resolve directory URLs consistently. The site uses local assets,
+system fonts, lightweight JavaScript, and no analytics. Without JavaScript,
+all work sections remain readable and both blog routes still work.
 
 PUBLISH
 1. Create a public repository named ethxin0011.github.io under ethxin0011.
@@ -16,15 +18,31 @@ PUBLISH
 5. Verify https://ethxin0011.github.io/ in a signed-out browser.
 6. Check the photo, full-size diagram, paper links, and mobile layout.
 
+APPLY THE BLOG UPDATE
+Extract the update into the root of your existing deployment branch, preserving
+its folder structure. Replace index.html, styles.css, tabs.js, and this file.
+Add blogs/ and assets/blogs/; keep .nojekyll and all existing assets. Check:
+  https://ethxin0011.github.io/
+  https://ethxin0011.github.io/blogs/
+  https://ethxin0011.github.io/blogs/how-agent-harnesses-improve/
+The desktop overview targets a 30/30/20/20 layout for blogs, research,
+engineering, and the profile. Panels can grow for their content. Clicking a
+rail tab or section arrow expands that section and folds the other two. Click
+the active tab or "Show overview" to reset.
+
 EDIT
-- index.html: bio, paper findings and Data & method summaries, project and contact.
+- index.html: home blog preview, papers, project, bio, and contact.
 - styles.css: typography, spacing and responsive layout.
-- tabs.js: Research/Engineering switching, keyboard navigation and section links.
+- tabs.js: section expansion, hash links, and complete research-paper dialogs.
+- blogs/index.html: blog list. Add future previews here and in index.html.
+- blogs/how-agent-harnesses-improve/index.html: first blog article.
+- assets/blogs/preview.png: the blog card artwork, for previews only.
+- assets/blogs/agent-harnesses-diagram.png: diagram, used only inside the article.
 - assets/portrait.jpg: resized portrait; source identity/location metadata removed.
 - assets/signoff-workflow.svg: public-facing architecture overview.
 
 CONTENT NOTES
-- The six linked articles are arXiv preprints; visible publication-status badges
+- The linked papers are arXiv preprints; visible publication-status badges
   are omitted for a quieter layout. Dates and paper links remain.
 - Paper summaries lead with findings; Data & method gives dataset size and protocol.
 - Counts distinguish corpus-specific items, answer options, verdicts, and rollout groups.
