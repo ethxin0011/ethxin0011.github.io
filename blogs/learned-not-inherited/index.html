@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Learned, Not Inherited: How MAI and Top AI Labs Build and Protect Original AI Models.">
+  <meta name="theme-color" content="#ffffff">
+  <title>Learned, Not Inherited: How MAI and Top AI Labs Build and Protect Original AI Models | Esther Xin</title>
+  <link rel="canonical" href="https://ethxin0011.github.io/blogs/learned-not-inherited/">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="wordmark" href="../../">Home</a>
+    <nav aria-label="Main navigation">
+      <a href="../">Blogs</a>
+      <a href="../../#research">Research</a>
+      <a href="../../#engineering">Engineering</a>
+      <a href="../../#contact">Contact</a>
+    </nav>
+  </header>
+  <main id="main" class="blog-article">
+    <article>
+      <header class="article-masthead">
+        <a class="article-back" href="../"><span aria-hidden="true">&larr;</span> All blogs</a>
+        <p class="eyebrow">AI research</p>
+        <h1>Learned, Not Inherited: How MAI and Top AI Labs Build and Protect Original AI Models</h1>
+        <p class="article-byline">By Esther Xin</p>
+      </header>
+      <div class="article-body">
+        <section>
+          <h2>Two ways to build a smart model</h2>
+          <p><strong>Copying (distillation):</strong> A new model learns by imitating the answers of a stronger model. It's fast and cheap, but the new model borrows skills it doesn't fully own, and it inherits the teacher's limits.</p>
+          <p><strong>Learning (from scratch):</strong> The model builds its skills from raw data and practice. It's slower and harder, but the skills are its own and it can keep improving.</p>
+        </section>
+
+        <div class="article-chart-row">
+          <figure class="article-diagram">
+            <a href="../../assets/blogs/chart_two_ways_detailed.png" target="_blank" rel="noopener" aria-label="Open full-size Two Ways to Build Intelligence chart (opens in a new tab)">
+              <img src="../../assets/blogs/chart_two_ways_detailed.png" alt="Two Ways to Build Intelligence: step-by-step comparison of copying (distillation) versus learning from scratch in MAI Thinking 1." width="966" height="768">
+            </a>
+          </figure>
+          <figure class="article-diagram">
+            <a href="../../assets/blogs/chart_why_learning_wins.png" target="_blank" rel="noopener" aria-label="Open full-size Why learning wins over time chart (opens in a new tab)">
+              <img src="../../assets/blogs/chart_why_learning_wins.png" alt="Why learning wins over time: copying jumps quickly then flattens at the teacher's ceiling, while learning from scratch climbs steadily past it." width="1195" height="768">
+            </a>
+          </figure>
+        </div>
+
+        <section>
+          <h2>Across the industry: original models are worth protecting</h2>
+          <p>The top labs treat original capability as valuable, and each protects it in its own way:</p>
+          <ul>
+            <li><strong>OpenAI</strong> has strengthened defenses against unauthorized copying in GPT-6.2 Astra and Sol. It focuses on protecting the model's hidden reasoning steps, because those steps are especially useful for training a copy.</li>
+            <li><strong>Anthropic</strong> added its strongest-ever protections against distillation attacks with Claude Fable 5.2.</li>
+            <li><strong>Google DeepMind</strong> builds its Gemini 4 lineup from its own models. For example, Gemini 4 Neon is adapted from Gemini 4 Carbon.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>MAI: learning, not copying</h2>
+          <p><strong>How:</strong> MAI trained MAI Thinking 1 from scratch, using only clean, enterprise-grade data and no third-party models to copy from. Its reasoning training starts without being shown any example reasoning steps. MAI's rule: <em>capabilities should be learned, not inherited.</em></p>
+          <p><strong>Why it pays off:</strong> MAI says copied skills are harder to steer and less robust over long training runs. A copied model starts near the teacher's ceiling, while a model that learns from scratch can keep climbing. MAI's <strong>Rocket</strong> system is built for exactly that: weeks to months of practice across thousands of GPUs. <strong>Result:</strong> MAI Thinking 1 (35B active / 1T total parameters) scored <strong>97.0%</strong> on AIME 2025 math, <strong>52.8%</strong> on SWE-Bench Pro coding and <strong>87.7%</strong> on LiveCodeBench v6, placing it among the strongest models of its size on reasoning and coding.</p>
+
+          <figure class="article-diagram article-chart-inline">
+            <a href="../../assets/blogs/chart_aime2025_mai.png" target="_blank" rel="noopener" aria-label="Open full-size AIME 2025 competition math chart (opens in a new tab)">
+              <img src="../../assets/blogs/chart_aime2025_mai.png" alt="AIME 2025 competition math bar chart: MAI Thinking 1 leads similar-size models at 97.0%, ahead of Kimi K2.5 (96.1%), GLM-4.7 (95.7%), DeepSeek-V3.2 (93.1%), and Qwen3-235B Thinking (92.3%)." width="1214" height="768">
+            </a>
+          </figure>
+
+          <p><strong>Next step:</strong> MAI Base 2 continues the approach on organic data with no distillation, and is 4&ndash;12&times; more compute-efficient than the strongest open base model MAI tested.</p>
+        </section>
+
+        <section>
+          <h2>Same principle, different emphasis</h2>
+          <p>Across the top labs, the direction is the same: original capability is worth building and worth protecting. MAI adds strong results achieved without copying anyone, with full ownership of both its models and the data behind them.</p>
+        </section>
+
+        <section>
+          <h2>Why it matters for everyone</h2>
+          <ul>
+            <li><strong>Trust:</strong> You know where the model's skills came from.</li>
+            <li><strong>Control:</strong> Clear data lineage is what lets MAI offer licensed weights that companies can run and adapt themselves.</li>
+            <li><strong>Room to grow:</strong> Self-learned skills keep climbing instead of stopping at a teacher's ceiling.</li>
+          </ul>
+        </section>
+
+        <p class="article-takeaway"><strong>Takeaway:</strong> Copying gives a fast start, but learning lasts longer. Like the other top labs, MAI is betting on intelligence it builds and owns, and MAI Thinking 1 shows the bet is already paying off.</p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <span>Esther Xin</span>
+    <a href="../">All blogs</a>
+  </footer>
+</body>
+</html>
