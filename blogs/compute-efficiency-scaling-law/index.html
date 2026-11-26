@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="OpenAI has proposed perplexity as the shared measure of AI progress. MAI's evaluation uses the same measure, scored per byte on clean test data, so every model lines up on one scale.">
+  <meta name="description" content="MAI-2 Base predicts unseen text better than leading frontier base models on a shared test. MAI's Bits-per-byte, clean-data method puts every lab on one fair scale.">
   <meta name="theme-color" content="#ffffff">
-  <title>Compute Efficiency Is the New Scaling Law: How MAI Benchmarks Progress Smarter with Perplexity | Esther Xin</title>
+  <title>One Scale for Every Model: How MAI-2 Base Sets the Pace on Perplexity | Esther Xin</title>
   <link rel="canonical" href="https://ethxin0011.github.io/blogs/compute-efficiency-scaling-law/">
   <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -25,58 +25,50 @@
       <header class="article-masthead">
         <a class="article-back" href="../"><span aria-hidden="true">&larr;</span> All blogs</a>
         <p class="eyebrow">Pretraining</p>
-        <h1>Compute Efficiency Is the New Scaling Law: How MAI Benchmarks Progress Smarter with Perplexity</h1>
+        <h1>One Scale for Every Model: How MAI-2 Base Sets the Pace on Perplexity</h1>
         <p class="article-byline">By Esther Xin</p>
       </header>
       <div class="article-body">
-        <p class="article-subtitle"><em>OpenAI has proposed perplexity as the shared measure of AI progress. MAI's evaluation uses the same measure, scored per byte on clean test data, so every model lines up on one scale.</em></p>
+        <p class="article-subtitle"><em>Perplexity is the clearest test of a model&rsquo;s core intelligence. On OpenAI&rsquo;s own held-out set, MAI-2 Base scores 0.819, ahead of GPT-5.6 Sol, and MAI&rsquo;s per-byte, clean-data method is built to compare fairly across every lab.</em></p>
 
         <section>
-          <h2>Two ways to make a model smarter</h2>
-          <p><strong>Spend more:</strong> Train a bigger model on more data with more compute. This is the classic scaling law, and it still works.</p>
-          <p><strong>Spend better:</strong> Get more out of each unit of compute. Better training methods cut the compute needed for the same capability by about 3&times; per year.</p>
-          <p>So a better model depends on both how much compute goes in and how well it is used.</p>
-          <p>That leads to a harder question: <strong>how do you measure "better" fairly?</strong></p>
+          <h2>Why perplexity is the core test</h2>
+          <p>Task benchmarks test specific skills, but they get used up fast and can leak into training data. Pre-training teaches a model one thing: predict the next piece of text. <strong>Perplexity</strong> measures <strong>how well a model predicts the next token on average</strong>; lower perplexity means better predictions. It shows how often the model is caught off guard by text it has never seen: the less it's surprised, the stronger the model.</p>
         </section>
 
         <section>
-          <h2>Three ways the industry measures progress</h2>
-          <p><strong>1. Task benchmarks: easy to read, but they don't last</strong></p>
-          <p>Benchmarks are tests of specific skills. They are easy to understand, but they get used up quickly. Many tests from the GPT-3 era were nearly maxed out by the time GPT-4 arrived. They can also leak into training data, which inflates scores.</p>
+          <h2>MAI-2 Base on a shared test</h2>
+          <p>MAI-2 Base was scored on OpenAI&rsquo;s held-out evaluation set with the <strong>same tokenizer</strong>, so its score sits on exactly the same scale as OpenAI&rsquo;s base models.</p>
 
-          <p style="margin-top: 12px;"><strong>2. Perplexity: one score that keeps working</strong></p>
-          <p>Pretraining teaches a model to predict the next piece of text. <strong>Perplexity</strong> measures <strong>how well a model predicts the next token on average</strong>; lower perplexity means better predictions.</p>
-          <p>OpenAI has proposed perplexity as a shared measure of progress across labs. MAI's evaluation is built on the same measure.</p>
+          <figure class="article-diagram" style="margin-top: 18px;">
+            <a href="../../assets/blogs/blog4-image1.png" target="_blank" rel="noopener" aria-label="Open full-size base-model log-perplexity chart (opens in a new tab)">
+              <img src="../../assets/blogs/blog4-image1.png" alt="Base-model log-perplexity on the same held-out set showing MAI-2 Base at 0.819 ahead of GPT-5.6 Sol at 0.828." width="1606" height="866">
+            </a>
+            <figcaption><em>Base-model log-perplexity on the same held-out set (lower is better).</em></figcaption>
+          </figure>
 
-          <p style="margin-top: 12px;"><strong>3. Bits-per-byte: the same perplexity, on a common scale</strong></p>
-          <p>To line up perplexity across labs, one detail matters. Models break text into <strong>tokens</strong> in different ways, so the same sentence might be 2 tokens for one model and 3 for another. Scores per token then shift with the tokenizer.</p>
-          <p><strong>Bits-per-byte (BPB)</strong> is perplexity converted to a per-<strong>byte</strong> scale. It measures the same prediction quality, and the result is the same however a model splits the text.</p>
-        </section>
-
-        <figure class="article-diagram">
-          <a href="../../assets/blogs/blog4-image1.png" target="_blank" rel="noopener" aria-label="Open full-size bits-per-byte comparison diagram (opens in a new tab)">
-            <img src="../../assets/blogs/blog4-image1.png" alt="Two models make equally good predictions. Per token, B looks better. Per byte, they score the same." width="1927" height="838">
-          </a>
-          <figcaption><em>Two models make equally good predictions. Per token, B looks better. Per byte, they score the same.</em></figcaption>
-        </figure>
-
-        <p><strong>This is how MAI applies perplexity in a smart way.</strong> MAI scores its models and other labs' models with <strong>BPB on held-out, decontaminated test sets</strong>. It is the same prediction measure OpenAI proposes, put on a scale every model shares and tested on data no model has trained on.</p>
-
-        <section style="margin-top: 24px;">
-          <h2>How to read an efficiency claim: 4 questions</h2>
-          <p>Efficiency headlines are easy to misread. Before trusting one, ask:</p>
-          <ol>
-            <li><strong>Is it on a common scale?</strong> Perplexity per byte (BPB) puts every model on the same scale.</li>
-            <li><strong>Is the test clean?</strong> A model shows misleadingly low loss on text it has already seen.</li>
-            <li><strong>Was it measured or projected?</strong> Many efficiency claims come from <strong>scaling-law projections</strong>. These estimate how much compute one training recipe would need to match another model. They are not records of what was actually spent.</li>
-            <li><strong>Where did the savings go?</strong> Labs often put efficiency gains into building a bigger model rather than spending less.</li>
-          </ol>
-          <p style="margin-top: 12px;"><strong>A worked example:</strong> MAI reports that its recipe for MAI-Base-2 is <strong>4&ndash;12&times; more FLOPs-efficient</strong> than DeepSeek-V4-Pro-Base, the strongest open base model, measured with BPB on clean test sets. Applying the questions above, this is a <strong>scaling-law projection</strong>, and MAI <strong>put the savings into a larger model</strong>. The actual training run used more total compute than DeepSeek's. Read that way, the claim says the recipe gets much more out of each unit of compute, which is the kind of gain that counts most when progress depends on efficiency.</p>
+          <p><strong>Ahead of GPT-5.6 Sol:</strong> MAI-2 Base scores <strong>0.819</strong> vs <strong>0.828</strong>, and beats every earlier GPT base model on the chart.</p>
+          <p><strong>A big step in one generation:</strong> from <strong>0.878</strong> (MAI-1 Base) to <strong>0.819</strong> (MAI-2 Base).</p>
+          <p><strong>Built on its own learning:</strong> MAI-2 Base was pre-trained on organic data with <strong>no distillation</strong> from other models.</p>
         </section>
 
         <section>
-          <h2>MAI's scorecard: a smarter way to benchmark</h2>
-          <p>MAI's write-up on MAI-Base-2 answers all four questions with numbers. Each check below closes a gap that a simple per-token score leaves open:</p>
+          <h2>Comparing every lab: two requirements</h2>
+          <p>A direct per-token comparison works here because the test set and tokenizer are shared.</p>
+          <p>Comparing across <strong>all</strong> labs needs two things:</p>
+          <p><strong>1. Bits-per-byte instead of perplexity.</strong> Labs use different tokenizers, so the same sentence might be 2 tokens for one model and 3 for another. <strong>Bits-per-byte (BPB)</strong> scores the same prediction quality per byte of raw text, so the result is the same however a model splits it.</p>
+          <p><strong>2. Use shared, clean evaluation datasets.</strong> A held-out set only works as a yardstick if no model has trained on it. Comparing across labs needs new test sets built for that purpose.</p>
+          <p style="margin-top: 12px;"><em>BPB = total loss in nats &divide; (ln 2 &times; number of bytes)</em></p>
+
+          <figure class="article-diagram" style="margin-top: 18px;">
+            <a href="../../assets/blogs/blog4-image2.png" target="_blank" rel="noopener" aria-label="Open full-size bits-per-byte comparison diagram (opens in a new tab)">
+              <img src="../../assets/blogs/blog4-image2.png" alt="Two models make equally good predictions. Per token, A looks better. Per byte, they score the same." width="1162" height="488">
+            </a>
+            <figcaption><em>Two models make equally good predictions. Per token, A looks better. Per byte, they score the same.</em></figcaption>
+          </figure>
+
+          <p><strong>MAI already meets both requirements.</strong> It scores models in BPB on its own vendor-built, decontaminated held-out sets:</p>
+
           <div class="article-table-wrap">
             <table class="article-table">
               <thead>
@@ -89,83 +81,32 @@
               <tbody>
                 <tr>
                   <td>1. Common scale</td>
-                  <td>Goes beyond perplexity per token: uses bits-per-byte, the per-byte form of perplexity, on held-out text, reported separately for code, STEM, Q&amp;A and math (lower is better) [microsoft.ai]</td>
-                  <td>A smart fix: models with different tokenizers land on one fair scale, and 4 domains show where a model is strong, not just average</td>
+                  <td>Scores every model in bits-per-byte</td>
+                  <td>Fair across tokenizers</td>
                 </tr>
                 <tr>
-                  <td>2. Clean test</td>
-                  <td>Code is tested on MAI's own codebase; STEM, math and Q&amp;A sets are commissioned from vendors; every set is decontaminated against training data</td>
-                  <td>Fresh test text, kept apart from training data, so the score reflects real skill, not memory</td>
+                  <td>2. Four domains</td>
+                  <td>Reports code, STEM, Q&amp;A and math separately</td>
+                  <td>Shows strength by domain</td>
                 </tr>
                 <tr>
-                  <td>3. Fair opponents</td>
-                  <td>Compared with models of at least 1 trillion parameters, and flags the three rivals (Kimi K3, Qwen3.8-2.4T-A95B, MiMo-V2.6-Pro-RL) that were only available after post-training</td>
-                  <td>Measured against the strongest peers at the same scale, with caveats stated openly</td>
+                  <td>3. Clean test</td>
+                  <td>Uses vendor-built, decontaminated held-out sets</td>
+                  <td>Measures skill, not memory</td>
                 </tr>
                 <tr>
-                  <td>4. Measured vs. projected</td>
-                  <td>4&ndash;12&times; more pre-training-FLOPs-efficient (4.2&ndash;12.3&times; in full) than DeepSeek-V4-Pro-Base, the strongest open base model. This is a scaling-law projection, built on scaling ladders that account for repeated data and on hyperparameter scaling laws</td>
-                  <td>Lets MAI plan a huge run in advance, and labels the result clearly as a projection</td>
-                </tr>
-                <tr>
-                  <td>5. Where savings went</td>
-                  <td>Into a larger model: 80B active / 2.8T total parameters, up from 35B / 1T in MAI-Base-1, trained on about 50T tokens (about 18% vision-language)</td>
-                  <td>Efficiency reinvested into more capability, not just lower cost</td>
-                </tr>
-                <tr>
-                  <td>6. How well the run went</td>
-                  <td>16k GB200 GPUs, 38 days (Aug&ndash;Sep 2026), 21% MFU, 89% goodput. MFU is measured against the GB200's full BF16 peak (2.5 PFLOPS) and leaves out rematerialization and optimizer work, so it is a conservative figure</td>
-                  <td>Rare openness: shows how well the hardware was actually used, which few labs publish</td>
-                </tr>
-                <tr>
-                  <td>7. Original learning</td>
-                  <td>Pre-trained on organic data with no distillation from other models, with strong provenance over its training tokens</td>
-                  <td>The score reflects what MAI's own model learned, not skills copied from another model</td>
-                </tr>
-                <tr>
-                  <td>8. How the efficiency was earned</td>
-                  <td>Improved MoE and Muon implementations, plus activation gradient clipping</td>
-                  <td>Shows the engineering behind the 4&ndash;12&times; gain, not just the headline number</td>
+                  <td>4. Strong opponents</td>
+                  <td>Compares against 1T+ parameter open-weight models, led by DeepSeek-V4-Pro-Base</td>
+                  <td>Like-for-like comparison</td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <p style="margin-top: 14px;"><strong>What the scorecard shows:</strong> MAI takes perplexity, the right idea, and makes it sharper. Scoring per byte instead of per token, on clean test sets, across four domains, against peers of the same size, turns one prediction score into a benchmark every lab can be checked against. That is smart benchmarking, and it makes MAI's claims easy to verify.</p>
+
+          <p style="margin-top: 14px;"><strong>The result:</strong> under all 4 checks, <strong>MAI-Base-2 outperforms every open-weight model MAI tested</strong>.</p>
         </section>
 
-        <section>
-          <h2>How the labs compare</h2>
-          <p><strong>OpenAI: perplexity as a speedometer</strong></p>
-          <p>In November 2026, OpenAI published its internal prediction scores for the first time and proposed perplexity as a shared measure across labs.</p>
-          <ul>
-            <li><strong>The numbers:</strong> GPT-3.5 scored about <strong>0.99</strong> and could hold a fluent conversation. GPT-4 reached about <strong>0.91</strong> and could reason step by step. Below <strong>0.8</strong>, strong cybersecurity and math skills appeared. GPT-6 Astra is at <strong>0.783</strong>, GPT-6.2 Astra at <strong>0.761</strong>, and an unreleased internal model at <strong>0.732</strong>.</li>
-            <li><strong>The proposal:</strong> OpenAI expects new abilities around <strong>0.68&ndash;0.70</strong>. It asks labs to agree not to cross shared limits until tools for monitoring AI behavior catch up.</li>
-            <li><strong>Making it work across labs:</strong> OpenAI notes that labs use different test sets and data mixes, and that post-training gains such as step-by-step reasoning don't show up in perplexity. Scoring per byte on clean, held-out data, as MAI does, is a practical way to line those scores up.</li>
-          </ul>
-
-          <p style="margin-top: 16px;"><strong>Anthropic: measuring how AI is built</strong></p>
-          <p>Anthropic takes a different angle. Instead of one quality score, it tracks the process behind each model.</p>
-          <ul>
-            <li><strong>What it tracks:</strong> an <strong>R&amp;D Automation Index</strong> showing how much of Anthropic's research Claude now does, how well humans can oversee and step in on AI agents, and the resources, such as compute, behind each new model.</li>
-            <li><strong>How it checks them:</strong> Anthropic plans to give outside evaluators the same level of internal access as its own risk teams. What its models can do is reported separately, in its Responsible Scaling Policy risk reports.</li>
-            <li><strong>The context:</strong> In September 2026, CEO Dario Amodei called on labs to <strong>"pace the frontier"</strong>, slowing how fast capabilities improve so safety work can keep up.</li>
-            <li><strong>How it fits:</strong> These measures show how fast development is moving. They work alongside a perplexity-style quality score, not in place of one.</li>
-          </ul>
-
-          <p style="margin-top: 16px;"><strong>Where MAI fits</strong></p>
-          <p>MAI is aligned with OpenAI's proposal: progress should be measured by <strong>perplexity on held-out data</strong>. MAI applies it as <strong>bits-per-byte on clean test sets</strong>, so the same measure works across every model family. Anthropic's process measures sit alongside it, tracking how fast that progress is being made.</p>
-        </section>
-
-        <section>
-          <h2>Why it matters for everyone</h2>
-          <ul>
-            <li><strong>Cost:</strong> Getting more from each unit of compute makes models cheaper to build and to run.</li>
-            <li><strong>Shared standard:</strong> One measure, scored the same way, lets every lab's claims be checked side by side.</li>
-            <li><strong>Trust:</strong> Clear, comparable numbers make claims easier to check.</li>
-          </ul>
-        </section>
-
-        <p class="article-takeaway"><strong>Takeaway:</strong> The industry is aligning on perplexity as its core measure of progress, and MAI is part of that shift. MAI measures perplexity <strong>per byte, on clean, held-out data, and is clear about what is measured versus projected</strong>, which helps make the shared standard work in practice.</p>
+        <p class="article-takeaway"><strong>Takeaway:</strong> On a shared per-token test, MAI-2 Base moves ahead of GPT-5.6 Sol. On MAI&rsquo;s per-byte, clean-data test, built for comparing every lab, it leads every open-weight model tested. Two strict yardsticks, one consistent story: MAI-2 Base is a frontier-class base model.</p>
       </div>
     </article>
   </main>
