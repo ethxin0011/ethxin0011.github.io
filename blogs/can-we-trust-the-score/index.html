@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Can We Trust the Score? How Top AI Labs Keep Benchmarks Honest: Anthropic, DeepMind, MAI, Meta, OpenAI.">
+  <meta name="theme-color" content="#ffffff">
+  <title>Can We Trust the Score? How Top AI Labs Keep Benchmarks Honest | Esther Xin</title>
+  <link rel="canonical" href="https://ethxin0011.github.io/blogs/can-we-trust-the-score/">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="wordmark" href="../../">Home</a>
+    <nav aria-label="Main navigation">
+      <a href="../">Blogs</a>
+      <a href="../../#research">Research</a>
+      <a href="../../#engineering">Engineering</a>
+      <a href="../../#contact">Contact</a>
+    </nav>
+  </header>
+  <main id="main" class="blog-article">
+    <article>
+      <header class="article-masthead">
+        <a class="article-back" href="../"><span aria-hidden="true">&larr;</span> All blogs</a>
+        <p class="eyebrow">Evaluation</p>
+        <h1>Can We Trust the Score? How Top AI Labs Keep Benchmarks Honest</h1>
+        <p class="article-byline">Anthropic, DeepMind, MAI, Meta, OpenAI &middot; By Esther Xin</p>
+      </header>
+      <div class="article-body">
+        <section>
+          <h2>Why contamination matters</h2>
+          <p>A benchmark score measures skill only if the model hasn't seen the test questions before. If test questions end up in the training data, which is called <strong>contamination</strong>, a model can answer from memory instead of reasoning, and its score overstates what it can actually do. AI labs share the goal of reducing this risk.</p>
+        </section>
+
+        <section>
+          <h2>Current industry practice</h2>
+          <p>Most 2026 model releases reported results on a shared set of public benchmarks. In one tally of 12 major AI companies, <strong>Terminal-Bench</strong>, <strong>Humanity's Last Exam</strong> and <strong>SWE-Bench Pro</strong> were each reported by all 12, and <strong>CyberGym</strong> was reported by 8. Shared benchmarks make direct comparisons possible. The drawback is that public test questions can spread into training data over time.</p>
+        </section>
+
+        <section>
+          <h2>How other top labs handle it</h2>
+          <p>Each lab addresses the problem in a different way:</p>
+          <ul>
+            <li><strong>OpenAI: replaces a benchmark once it shows signs of contamination.</strong> OpenAI stopped reporting SWE-bench Verified after finding that every frontier model it tested could reproduce parts of some problems and their solutions. It recommended SWE-Bench Pro instead.</li>
+            <li><strong>Google DeepMind: reports scores adjusted for cheating.</strong> For Gemini 4, DeepMind reports cheating-adjusted Terminal-Bench scores. It publishes its evaluation methodology for each model, and outside reviewers are still asking it for more detail on contamination audits.</li>
+            <li><strong>Anthropic: reviews evaluation runs for leaked answers and reports what it finds.</strong> When Anthropic tested Claude Opus 4.6 on 1,266 BrowseComp problems, it found 9 cases where the answers had leaked onto the public web. In 2 more cases, the model worked out that it was being tested, identified the benchmark and decoded the answer key. Anthropic published these findings, re-ran the affected problems with stricter controls, and reported a slightly lower adjusted score.</li>
+            <li><strong>Meta: adds private benchmarks to public ones.</strong> Meta's Muse Spark 1.1 evaluation report includes results on both private and public benchmarks. Two approaches are common across labs: checking for leaks after testing and reporting adjusted scores, and using test sets that have never been made public.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>What research says about detection and cleaning</h2>
+          <ul>
+            <li><strong>Checking the model after training has limits.</strong> A study at ICLR 2026 found that reinforcement learning (RL), in which a model practices and is rewarded for correct answers, can weaken the signals that contamination detectors look for. Preventing overlap before training is more reliable than trying to detect it afterward.</li>
+            <li><strong>Contamination is still increasing.</strong> A November 2026 study found that some public base models can reproduce benchmark questions and their answers. The authors called for decontamination reports and contamination-adjusted scores to become standard practice.</li>
+            <li><strong>The cleaning method changes both accuracy and data loss.</strong> An audit of about 1.67 million math training items compared different rules for removing contaminated data:<br>
+              &ndash; <strong>Exact text matching</strong> removed nothing by mistake, but it caught only about 7% of the confirmed overlap.<br>
+              &ndash; <strong>A loose "similar meaning" filter</strong> wrongly removed 52 of 59 sampled items (88%), which were actually different problems.<br>
+              &ndash; <strong>A similarity filter plus case-by-case review</strong> reached about 98% precision and 98% recall on data it had not been tuned on.<br>
+              These results come from small reviewed samples of math data, so they show a trend, not a fixed rate.
+            </li>
+          </ul>
+        </section>
+
+        <figure class="article-diagram">
+          <a href="../../assets/blogs/blog3-image1.png" target="_blank" rel="noopener" aria-label="Open full-size benchmark decontamination comparison chart (opens in a new tab)">
+            <img src="../../assets/blogs/blog3-image1.png" alt="Chart comparing benchmark contamination detection and cleaning methods across precision, recall, and false removals." width="1727" height="858">
+          </a>
+        </figure>
+
+        <section>
+          <h2>How MAI approaches evaluation</h2>
+          <p>MAI reports results on public benchmarks and, according to its published notes, adds several safeguards:</p>
+          <ul>
+            <li><strong>Held-out tests:</strong> For its base models (before any later training), MAI's STEM, math and Q&amp;A test sets are commissioned from vendors, which lowers the chance that the questions already exist online. Code is tested on MAI's own codebase.</li>
+            <li><strong>Decontamination:</strong> MAI reports that it checked all of its evaluation sets against its training data and removed overlaps.</li>
+            <li><strong>Exclusions applied to every model:</strong> On CyberGymE2E, MAI found that 92 of the 905 tasks drew on the same open-source projects and vulnerability reports as some of its training data. MAI says the benchmark's reference solutions were not used in training. It removed those 92 tasks for every model and reported results on the remaining 813.</li>
+          </ul>
+        </section>
+
+        <figure class="article-diagram">
+          <a href="../../assets/blogs/blog3-image2.png" target="_blank" rel="noopener" aria-label="Open full-size MAI evaluation results chart (opens in a new tab)">
+            <img src="../../assets/blogs/blog3-image2.png" alt="Chart showing MAI Cyber 2 Flash evaluation results on filtered CyberGymE2E and WebExploitBench tasks." width="1406" height="827">
+          </a>
+        </figure>
+
+        <section>
+          <h2>Results on the filtered set:</h2>
+          <ul>
+            <li><strong>CyberGymE2E:</strong> MAI Cyber 2 Flash scored 92.3%, compared with 91.5% for GPT6 Astra. It used half the reasoning budget, and its estimated cost per task, based on list prices, was under 2% of GPT6 Astra's.</li>
+            <li><strong>WebExploitBench:</strong> MAI Cyber 2 Flash scored 40.4%, compared with 38.4% for GPT5.6 Cyber at the same reasoning budget. MAI notes that results vary by workload, configuration and evaluation method, and that a comparison with GPT6 Cyber is still to come.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>How this compares with standard practice</h2>
+          <ul>
+            <li><strong>Compatible:</strong> MAI uses the same public benchmarks as other labs, so its results can be compared directly with theirs.</li>
+            <li><strong>Preventive:</strong> OpenAI, DeepMind and Anthropic mostly adjust or replace scores after finding a problem. MAI's held-out and decontaminated test sets aim to prevent overlap before scoring. The two approaches complement each other.</li>
+            <li><strong>Conservative:</strong> Removing the overlapping tasks for every model is a cautious choice. It drops tasks that might have favored MAI's own model and keeps the comparison on the same set of tasks.</li>
+          </ul>
+        </section>
+
+        <p class="article-takeaway"><strong>Takeaway:</strong> Leading labs are moving toward cleaner and more transparent evaluation, each in its own way. MAI's practices fit this direction: held-out tests, decontaminated evaluation sets and exclusions applied to every model. MAI Cyber 2 Flash still performed competitively under these stricter conditions.</p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <span>Esther Xin</span>
+    <a href="../">All blogs</a>
+  </footer>
+</body>
+</html>
