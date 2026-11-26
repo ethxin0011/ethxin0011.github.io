@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MAI combines precise scaling science, a sparse MoE design, the efficient Muon optimizer and purpose-built infra to get far more from every unit of compute.">
+  <meta name="theme-color" content="#ffffff">
+  <title>Compute Efficiency Is the New Scaling Law: How MAI Gets 4–12× More from Each FLOP | Esther Xin</title>
+  <link rel="canonical" href="https://ethxin0011.github.io/blogs/mai-compute-efficiency/">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="wordmark" href="../../">Home</a>
+    <nav aria-label="Main navigation">
+      <a href="../">Blogs</a>
+      <a href="../../#research">Research</a>
+      <a href="../../#engineering">Engineering</a>
+      <a href="../../#contact">Contact</a>
+    </nav>
+  </header>
+  <main id="main" class="blog-article">
+    <article>
+      <header class="article-masthead">
+        <a class="article-back" href="../"><span aria-hidden="true">&larr;</span> All blogs</a>
+        <p class="eyebrow">Pretraining</p>
+        <h1>Compute Efficiency Is the New Scaling Law: How MAI Gets 4&ndash;12&times; More from Each FLOP</h1>
+        <p class="article-byline">By Esther Xin</p>
+      </header>
+
+      <div class="article-body">
+        <p class="article-subtitle"><em>MAI combines precise scaling science, a sparse MoE design, the efficient Muon optimizer and purpose-built infrastructure to get far more from every unit of compute.</em></p>
+
+        <section>
+          <h2>Two ways to make a model smarter</h2>
+          <p><strong>Spend more:</strong> Train a bigger model on more data with more compute.</p>
+          <p><strong>Spend smarter:</strong> Get more out of each unit of compute with better training methods.</p>
+          <p>MAI-Base-2 does both, and it shows how far spending smarter can go.</p>
+        </section>
+
+        <section>
+          <h2>The headline: 4&ndash;12&times; more from every FLOP</h2>
+          <p>MAI's scaling-law analysis shows its recipe for MAI-Base-2 is <strong>4&ndash;12&times; more pre-training-FLOPs-efficient</strong> than <strong>DeepSeek-V4-Pro-Base</strong>, the strongest open base model it tested. In plain terms: to reach the same quality, MAI's recipe needs only a fraction of the compute. MAI put that gain straight back into capability, building a much bigger and stronger model.</p>
+        </section>
+
+        <section>
+          <h2>How MAI did it: 3 smart levers</h2>
+          <div class="article-table-wrap">
+            <table class="article-table article-table--levers">
+              <thead>
+                <tr>
+                  <th>Lever</th>
+                  <th>What MAI did</th>
+                  <th>Why it saves compute</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1. Scaling science</td>
+                  <td>
+                    <p><strong>Scaling ladders:</strong> before the big run, MAI trains a series of small models at growing sizes and tracks how quality improves as size and data grow. The ladders also account for reusing the same high-quality data more than once.</p>
+                    <p><strong>Hyperparameter scaling laws:</strong> MAI measured how the best training settings, such as learning rate, shift with model size, so the big run starts with the right settings from day one.</p>
+                  </td>
+                  <td>Small runs accurately predict the big one, so no compute is wasted on guesses</td>
+                </tr>
+                <tr>
+                  <td>2. Model + infrastructure co-design</td>
+                  <td>
+                    <p><strong>Mixture of experts (MoE):</strong> the model is split into many smaller "expert" parts, and only a few are switched on for each word, so it can be huge while each step stays cheap. MAI rebuilt how these experts run on its GPUs.</p>
+                    <p><strong>Muon:</strong> a stronger optimizer, the rule that decides how the model updates itself at each step; MAI made it run efficiently at scale.</p>
+                    <p><strong>Activation gradient clipping:</strong> caps unusually large update signals, so one bad step can't knock the run off course.</p>
+                  </td>
+                  <td>The model runs fast on the hardware and stays stable at huge scale</td>
+                </tr>
+                <tr>
+                  <td>3. Scaling data</td>
+                  <td>
+                    <p><strong>Bigger data pipelines:</strong> MAI expanded the systems that collect, clean and filter training data, reaching about 50T tokens. <strong>Vision data:</strong> images paired with text were built into training, so the model learns from both.</p>
+                    <p><strong>Organic data, no distillation:</strong> the model learns from real-world data, not by copying answers from other AI models.</p>
+                  </td>
+                  <td>More useful learning per FLOP, with full ownership of what the model learned</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h2>The payoff: a bigger, stronger model</h2>
+          <div class="article-table-wrap">
+            <table class="article-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>MAI-Base-1</th>
+                  <th>MAI-Base-2</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Active parameters</td>
+                  <td>35B</td>
+                  <td>80B</td>
+                </tr>
+                <tr>
+                  <td>Total parameters</td>
+                  <td>1T</td>
+                  <td>2.8T</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top: 12px;">MAI-Base-2 is a mixture-of-experts model: it uses only a small part of its network for each token. That lets it grow <strong>2.8&times; larger</strong> while keeping the cost of each prediction low. It learned from about <strong>50T tokens</strong>, including vision-language data.</p>
+        </section>
+
+        <section>
+          <h2>Keeping 16,000 GPUs productive</h2>
+          <div class="article-table-wrap">
+            <table class="article-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>MAI-Base-2</th>
+                  <th>What it means</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Hardware</td>
+                  <td>16k GB200 GPUs</td>
+                  <td>Frontier-scale training, openly published</td>
+                </tr>
+                <tr>
+                  <td>Duration</td>
+                  <td>38 days</td>
+                  <td>The full pre-training run, start to finish</td>
+                </tr>
+                <tr>
+                  <td>Goodput</td>
+                  <td>89%</td>
+                  <td>Share of time the run was making real progress</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top: 12px;">At this scale, hardware hiccups are routine. Keeping <strong>89% goodput</strong> across 16,000 GPUs shows a training system built to keep moving forward.</p>
+        </section>
+
+        <section>
+          <h2>Efficient from training to serving</h2>
+          <p><strong>Post-training:</strong> MAI's Rocket RL framework recovers and reconfigures without restarting, saving an estimated <strong>2.6M GPU-hours</strong> in RL training.</p>
+          <p><strong>Serving:</strong> MAI's Maia 200 chip delivers <strong>1.7&times; more tokens per watt</strong>.</p>
+        </section>
+
+        <section>
+          <h2>Why it matters</h2>
+          <p><strong>Cost:</strong> Getting more from each unit of compute makes models cheaper to build and to run.</p>
+          <p><strong>Capability:</strong> Saved compute can be turned into a bigger, stronger model.</p>
+          <p><strong>Independence:</strong> Owning the full stack, from data to chip, lets MAI tune model and infrastructure together.</p>
+        </section>
+
+        <p class="article-takeaway"><strong>Takeaway:</strong> MAI predicts the big run with small ones, builds the model and infrastructure as one system, and keeps a huge run productive almost all the time. The result: a far larger, stronger model from a smarter use of compute.</p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <span>Esther Xin</span>
+    <a href="../">All blogs</a>
+  </footer>
+</body>
+</html>
