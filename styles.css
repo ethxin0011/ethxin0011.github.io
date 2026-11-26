@@ -354,6 +354,7 @@ footer { display: flex; justify-content: space-between; gap: 18px; padding: 23px
 .blog-summary span { display: block; }
 .blog-summary span + span { margin-top: 2px; }
 #blogs[data-state="preview"] .panel-content { margin: 0; }
+#blogs[data-state="preview"] .blog-card:nth-child(n+5) { display: none; }
 #research[data-state="preview"] .panel-content { margin: auto 0; }
 #blogs[data-state="expanded"] .panel-content { margin: 0 0 14px; }
 
@@ -544,7 +545,7 @@ html:has(.paper-dialog[open]) { overflow: hidden; }
 .article-body section { margin: 0 0 26px; }
 .article-body h2 { font-family: inherit; font-size: 18px; font-weight: 650; letter-spacing: -0.015em; margin: 0 0 6px; color: var(--ink); }
 .article-body section p { margin: 0 0 6px; }
-.article-body ul { margin: 8px 0 0; padding-inline-start: 1.35em; }
+.article-body ul, .article-body ol { margin: 8px 0 0; padding-inline-start: 1.35em; }
 .article-body li + li { margin-top: 5px; }
 .article-table-wrap { margin: 12px 0 0; overflow-x: auto; }
 .article-table {
