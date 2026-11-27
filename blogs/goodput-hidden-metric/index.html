@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Goodput: The Hidden Metric of Frontier Training.">
+  <meta name="description" content="Test scores show what a finished model can do; goodput shows how well a lab can build one. Among the top AI labs, MAI is the one that has published this number for a frontier run.">
   <meta name="theme-color" content="#ffffff">
-  <title>Goodput: The Hidden Metric of Frontier Training | Esther Xin</title>
+  <title>Goodput: The Hidden Training-Time Benchmark Only MAI Has Shared | Esther Xin</title>
   <link rel="canonical" href="https://ethxin0011.github.io/blogs/goodput-hidden-metric/">
   <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -25,11 +25,156 @@
       <header class="article-masthead">
         <a class="article-back" href="../"><span aria-hidden="true">&larr;</span> All blogs</a>
         <p class="eyebrow">Training systems</p>
-        <h1>Goodput: The Hidden Metric of Frontier Training</h1>
+        <h1>Goodput: The Hidden Training-Time Benchmark Only MAI Has Shared</h1>
         <p class="article-byline">By Esther Xin</p>
       </header>
       <div class="article-body">
-        <p class="article-subtitle">Full article coming soon.</p>
+        <p class="article-subtitle"><em>How the metric works, how it is calculated, and how the top AI labs compare</em></p>
+
+        <p><strong>In one line:</strong> Test scores show what a finished model can do; goodput shows how well a lab can build one. Among the top AI labs, MAI is the one that has published this number for a frontier run: <strong>89% across 16,000 GPUs.</strong></p>
+
+        <section style="margin-top: 24px;">
+          <h2>1. What goodput measures</h2>
+          <p>Training a frontier model means running thousands of chips together for weeks. Chips fail, connections drop and jobs stall, so not every hour on the clock actually trains the model. Goodput is the share of time that does. Google defines it as the proportion of time spent making productive, preserved training progress; the rest, called badput, is time lost to startup, stalls and recovery.</p>
+          <figure class="article-diagram" style="margin-top: 18px;">
+            <a href="../../assets/blogs/blog5-image1.png" target="_blank" rel="noopener" aria-label="Open full-size goodput vs badput diagram (opens in a new tab)">
+              <img src="../../assets/blogs/blog5-image1.png" alt="Diagram explaining goodput as productive training time versus badput lost to startup, stalls, checkpoints, and recovery." width="1800" height="780">
+            </a>
+          </figure>
+        </section>
+
+        <section>
+          <h2>2. How it is calculated</h2>
+          <p><strong>Goodput = productive training time &divide; total elapsed time</strong></p>
+          <p>Everything that is not productive training counts against the score:</p>
+          <div class="article-table-wrap">
+            <table class="article-table">
+              <thead>
+                <tr>
+                  <th>Time sink (badput)</th>
+                  <th>What happens</th>
+                  <th>How strong labs reduce it</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Startup / restart</td>
+                  <td>Loading the model, connecting thousands of chips, warming up</td>
+                  <td>Faster job launch and model loading</td>
+                </tr>
+                <tr>
+                  <td>Saving progress</td>
+                  <td>Pausing to write checkpoints to storage</td>
+                  <td>Faster, overlapped checkpoint saves</td>
+                </tr>
+                <tr>
+                  <td>Failures and hangs</td>
+                  <td>A chip, network link or process stops the job</td>
+                  <td>Automatic detection, swap-out and recovery</td>
+                </tr>
+                <tr>
+                  <td>Redone work</td>
+                  <td>Progress since the last save is lost and must be repeated</td>
+                  <td>Frequent saves; recovery without full restarts</td>
+                </tr>
+                <tr>
+                  <td>Slow steps</td>
+                  <td>Some steps run slower than normal (stragglers)</td>
+                  <td>Monitoring and removing slow nodes</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top: 14px;">Why scale makes this hard: the bigger the run, the more often something breaks. Industry data puts failures at roughly every 3 hours on a 16,000-GPU cluster and every 18 minutes at 100,000 GPUs, so keeping goodput high is a real engineering achievement.</p>
+          <figure class="article-diagram" style="margin-top: 18px;">
+            <a href="../../assets/blogs/blog5-image2.png" target="_blank" rel="noopener" aria-label="Open full-size cluster failure frequency chart (opens in a new tab)">
+              <img src="../../assets/blogs/blog5-image2.png" alt="Chart showing how hardware failure intervals shrink as GPU cluster scale grows from 16,000 to 100,000 GPUs." width="1692" height="572">
+            </a>
+          </figure>
+        </section>
+
+        <section>
+          <h2>3. MAI&rsquo;s result: 89% goodput on a 16,000-GPU frontier run</h2>
+          <p>MAI pre-trained MAI Base 2, a 2.8-trillion-parameter mixture-of-experts model, on 16,000 GB200 GPUs over 38 days in August and September 2026. Across the run, 89% of the time went into real training progress.</p>
+          <figure class="article-diagram" style="margin-top: 18px;">
+            <a href="../../assets/blogs/blog5-image3.png" target="_blank" rel="noopener" aria-label="Open full-size MAI Base 2 89% goodput breakdown chart (opens in a new tab)">
+              <img src="../../assets/blogs/blog5-image3.png" alt="Breakdown of MAI Base 2's 38-day 16,000-GPU run showing 89% goodput (about 13.0M of 14.6M GPU-hours in productive progress)." width="1800" height="690">
+            </a>
+          </figure>
+          <ul>
+            <li><strong>Worked example:</strong> 16,000 GPUs &times; 38 days &times; 24 hours &asymp; 14.6M GPU-hours on the clock. At 89% goodput, about 13.0M GPU-hours went into real progress.</li>
+            <li><strong>Why it paid off:</strong> MAI Base 2 is 4&ndash;12&times; more pre-training compute-efficient than the strongest open base model MAI tested, and MAI put those savings into training a larger model.</li>
+            <li><strong>After pre-training:</strong> MAI&rsquo;s Rocket system runs reinforcement learning for weeks to months, and is built to recover and reconfigure components while the run continues instead of restarting the whole job.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>4. How the top AI labs compare</h2>
+          <p>Based on public sources as of November 26, 2026:</p>
+          <div class="article-table-wrap">
+            <table class="article-table">
+              <thead>
+                <tr>
+                  <th>Lab</th>
+                  <th>Published goodput for a frontier run?</th>
+                  <th>Published run details</th>
+                  <th>What they have shared instead</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>MAI</td>
+                  <td>Yes: 89%</td>
+                  <td>16,000 GB200 GPUs, 38 days, 2.8T-parameter MAI Base 2</td>
+                  <td>Run-level goodput plus RL fault-tolerance design (Rocket)</td>
+                </tr>
+                <tr>
+                  <td>Google DeepMind</td>
+                  <td>Not found</td>
+                  <td>Not found for Gemini runs</td>
+                  <td>Google defined the goodput metric, released a measurement library and a TPU fleet-efficiency study</td>
+                </tr>
+                <tr>
+                  <td>OpenAI</td>
+                  <td>Not found</td>
+                  <td>Not found</td>
+                  <td>Pre-training loss trend across 13 models since GPT-3.5</td>
+                </tr>
+                <tr>
+                  <td>Anthropic</td>
+                  <td>Not found</td>
+                  <td>Not found</td>
+                  <td>No public training-run efficiency figures found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top: 14px;"><strong>What this means:</strong> Google created the yardstick, but MAI is the lab that has published a real frontier-run measurement with it. That makes MAI&rsquo;s 89% the public reference point for training efficiency among the top labs.</p>
+        </section>
+
+        <section>
+          <h2>5. Why it matters</h2>
+          <ul>
+            <li><strong>Lower cost:</strong> less wasted compute means cheaper models for customers.</li>
+            <li><strong>Faster progress:</strong> more useful hours mean better models sooner.</li>
+            <li><strong>Trust:</strong> a published number can be checked, compared and learned from.</li>
+          </ul>
+        </section>
+
+        <p class="article-takeaway"><strong>Takeaway:</strong> Raw compute gets the headlines, but goodput decides how much of it turns into intelligence. MAI turned 89% of a 16,000-GPU frontier run into real progress, and is the top lab that has shown its work.</p>
+
+        <section style="margin-top: 26px;">
+          <h2>Sources</h2>
+          <ul>
+            <li>Microsoft AI, Frontier Pre-training at Microsoft AI (Oct 15, 2026): <a href="https://microsoft.ai/news/frontier-pre-training-at-microsoft-ai" target="_blank" rel="noopener noreferrer">microsoft.ai/news/frontier-pre-training-at-microsoft-ai</a></li>
+            <li>Microsoft AI, RL infrastructure at Microsoft AI (Nov 23, 2026): <a href="https://microsoft.ai/news/rl-infrastructure-at-microsoft-ai" target="_blank" rel="noopener noreferrer">microsoft.ai/news/rl-infrastructure-at-microsoft-ai</a></li>
+            <li>Google Cloud, Monitor goodput with the ML Goodput Measurement library: <a href="https://docs.cloud.google.com/tpu/docs/goodput" target="_blank" rel="noopener noreferrer">docs.cloud.google.com/tpu/docs/goodput</a></li>
+            <li>Google, Machine Learning Fleet Efficiency with ML Productivity Goodput (<a href="https://arxiv.org/abs/2502.06982" target="_blank" rel="noopener noreferrer">arXiv:2502.06982</a>)</li>
+            <li>METR, Interpreting a recent acceleration in pretraining loss (Nov 24, 2026), on OpenAI&rsquo;s published loss data</li>
+            <li>ReCoVer: Resilient LLM Pre-Training System (<a href="https://arxiv.org/abs/2605.11215" target="_blank" rel="noopener noreferrer">arXiv:2605.11215</a>), failure intervals at 16k and 100k GPUs</li>
+          </ul>
+          <p style="margin-top: 12px; font-size: 13px; color: var(--muted);"><em>Note: "Not found" means no public figure was found in our review; labs may track this metric internally. MAI figures are MAI-reported.</em></p>
+        </section>
       </div>
     </article>
   </main>
