@@ -569,6 +569,8 @@ html:has(.paper-dialog[open]) { overflow: hidden; }
 }
 .article-table td:first-child { font-weight: 600; white-space: nowrap; }
 .article-table--levers td:first-child { white-space: normal; width: 22%; }
+.article-table--wide { min-width: 720px; font-size: 12.5px; }
+.article-table--wide td:first-child { white-space: normal; width: 14%; }
 .article-table td p { margin: 0; }
 .article-table td p + p { margin-top: 8px; }
 .article-takeaway { margin: 0; padding: 18px 20px; border-radius: 10px; background: var(--surface); border: 1px solid rgba(24, 24, 27, 0.05); }
