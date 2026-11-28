@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="How MAI's RL Infra smartly designed to handle the from-scratch training complex loop.">
+  <meta name="theme-color" content="#ffffff">
+  <title>Rocket: How MAI's Training Infra Makes From-Scratch RL Run Efficiently | Esther Xin</title>
+  <link rel="canonical" href="https://ethxin0011.github.io/blogs/mai-rocket-rl-infrastructure/">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="wordmark" href="../../">Home</a>
+    <nav aria-label="Main navigation">
+      <a href="../">Blogs</a>
+      <a href="../../#research">Research</a>
+      <a href="../../#engineering">Engineering</a>
+      <a href="../../#contact">Contact</a>
+    </nav>
+  </header>
+  <main id="main" class="blog-article">
+    <article>
+      <header class="article-masthead">
+        <a class="article-back" href="../"><span aria-hidden="true">&larr;</span> All blogs</a>
+        <p class="eyebrow">RL infrastructure</p>
+        <h1>Rocket: How MAI's Training Infra Makes From-Scratch RL Run Efficiently</h1>
+        <p class="article-byline">By Esther Xin</p>
+      </header>
+
+      <div class="article-body">
+        <p class="article-subtitle"><em>What is new in MAI&rsquo;s reinforcement learning system, with hard data, and how it compares with Meta, Google DeepMind, OpenAI and Anthropic</em></p>
+
+        <p><strong>Summary.</strong> RL is often a short polish at the end of training. MAI uses RL to climb from a base model, with no distillation from other labs&rsquo; models. Rocket, MAI&rsquo;s in-house RL system, is built for that harder case. It keeps the sampler and learner in exact (bitwise) agreement, holds policy lag to 0&ndash;3 steps, and recovers from failures without restarting the job. MAI estimates recovery and runtime changes saved about 2.6 million GPU-hours in part of a run.</p>
+
+        <section style="margin-top: 24px;">
+          <h2>1. Why long RL climbs need different infrastructure</h2>
+          <p>A model distilled from a stronger teacher starts RL near its ceiling, so RL is short and a failed run can simply be restarted. MAI climbs from base capabilities through RL itself. Over thousands of updates, three problems that are minor in short runs become the main design constraints:</p>
+          <ul>
+            <li><strong>Staleness:</strong> agentic rollouts can take hours while the learner keeps updating. GRPO scores each attempt against others for the same problem, so one slow attempt holds back its whole group.</li>
+            <li><strong>Numerical drift:</strong> the sampler and learner use different precision, kernels and parallelism. Small disagreements compound and can destabilize training.</li>
+            <li><strong>Failures and change:</strong> hardware fails on long runs, and the best data mix and GPU split shift as the model improves. Restarting for each event wastes GPU time.</li>
+          </ul>
+
+          <p style="margin-top: 18px;"><strong>Which phases Rocket covers</strong></p>
+          <div class="article-table-wrap">
+            <table class="article-table">
+              <thead>
+                <tr>
+                  <th>Phase</th>
+                  <th>Done by</th>
+                  <th>What happens</th>
+                  <th>Published time and scale</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Pre-training</td>
+                  <td>MAI's training stack, not Rocket</td>
+                  <td>The base model learns from raw data</td>
+                  <td>MAI Base 2: 16K GB200 GPUs for 38 days. MAI Thinking 1: 30T tokens on 8,192 GB200s</td>
+                </tr>
+                <tr>
+                  <td>Mid-training</td>
+                  <td>Training stack, not Rocket</td>
+                  <td>The model is extended to longer inputs: 64K, then 256K tokens</td>
+                  <td>8,192 and 4,096 GB200s.</td>
+                </tr>
+                <tr>
+                  <td>STEM climb</td>
+                  <td>Rocket</td>
+                  <td>RL on math and code problems</td>
+                  <td>Part of the RL total</td>
+                </tr>
+                <tr>
+                  <td>Agentic climb</td>
+                  <td>Rocket</td>
+                  <td>Code-heavy RL using tools and sandboxes</td>
+                  <td>Part of the RL total</td>
+                </tr>
+                <tr>
+                  <td>Collapse recovery</td>
+                  <td>Rocket</td>
+                  <td>If a run collapses, it resets from MAI's own earlier checkpoint (self-distillation)</td>
+                  <td>As needed. This happened less often as Rocket improved</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <figure class="article-diagram" style="margin-top: 20px;">
+            <a href="../../assets/blogs/blog8-image1.png" target="_blank" rel="noopener" aria-label="Open full-size MAI training phases and Rocket scope diagram (opens in a new tab)">
+              <img src="../../assets/blogs/blog8-image1.png" alt="Diagram showing pre-training, mid-training, STEM climb, agentic climb, and collapse recovery phases covered by Rocket." width="2100" height="1230">
+            </a>
+          </figure>
+        </section>
+
+        <section>
+          <h2>2. Inside Rocket</h2>
+          <p>Rocket splits RL into six roles that run in parallel. CPU workers handle problems, agent loops and grading; GPUs handle sampling and learning. It runs on Kubernetes or Slurm with Ray actors, a GRPO learner and an MAI-adapted SGLang sampler, with sandboxes, search and MCP tool servers as environments.</p>
+
+          <figure class="article-diagram" style="margin-top: 18px;">
+            <a href="../../assets/blogs/blog8-image2.png" target="_blank" rel="noopener" aria-label="Open full-size Rocket six-role architecture diagram (opens in a new tab)">
+              <img src="../../assets/blogs/blog8-image2.png" alt="Architecture diagram of Rocket's six parallel roles across CPU workers, GPU SGLang samplers, GRPO learner, and shared rollout store." width="1950" height="1080">
+            </a>
+          </figure>
+
+          <p>Two design choices stand out. Work moves as references, not copies: large token payloads sit in a shared rollout store and the learner pulls them when needed. And the controller and learner both save recovery checkpoints, so the system can rebuild after a fault instead of starting over.</p>
+
+          <figure class="article-diagram" style="margin-top: 18px;">
+            <a href="../../assets/blogs/blog8-image3.png" target="_blank" rel="noopener" aria-label="Open full-size Rocket reference passing and checkpoint recovery diagram (opens in a new tab)">
+              <img src="../../assets/blogs/blog8-image3.png" alt="Diagram showing reference-based rollout storage and dual controller/learner recovery checkpoints." width="1950" height="690">
+            </a>
+          </figure>
+        </section>
+
+        <section>
+          <h2>3. What is novel: three problems, three answers</h2>
+          <div class="article-table-wrap">
+            <table class="article-table article-table--levers">
+              <thead>
+                <tr>
+                  <th>Challenge</th>
+                  <th>Rocket&rsquo;s answer</th>
+                  <th>Hard data (MAI-reported)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Staleness</td>
+                  <td>Drops failed rollouts instead of retrying, so one bad attempt cannot stall its group. Syncs weights to samplers often with a two-stage transfer. Gives the learner spare GPUs so the job is limited by inference, not training.</td>
+                  <td>
+                    <p>Policy lag 0&ndash;3 steps (sync every 4 steps)</p>
+                    <p>Weight transfer ~15 s</p>
+                    <p>Finished work waits ~12 s before training</p>
+                    <p>Seen in practice: a 7.6 h gap inside one rollout group</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Numerical consistency</td>
+                  <td>Matches sampler and learner computation exactly. For MAI Base 2, stores MoE weights in MXFP8 to save memory but multiplies in BF16, because MXFP8 math caused larger log-prob gaps.</td>
+                  <td>
+                    <p>Bitwise parity on identical checkpoints and inputs, with no noticeable speed cost</p>
+                    <p>&gt;95% of parameters (MoE) stored in MXFP8</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Fault tolerance and elasticity</td>
+                  <td>Recovery checkpoints for controller and learner state; runtime management tracks worker health and reallocates resources; the data mix can change mid-run.</td>
+                  <td>
+                    <p>~2.595M GPU-hours saved in part of RL training (estimate, 6,000 GPUs)</p>
+                    <p>NVL64 racks: 8 spare GPUs per 72-GPU rack for fast swaps</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p style="margin-top: 14px;"><strong>Proof it works:</strong> Rocket post-trained MAI Base 1 into MAI Thinking 1 on about 4,600 GB300 GPUs (largest job 4,864), with rollouts up to 128K tokens. The result scored 97.0% on AIME 2025, 87.7% on LiveCodeBench v6 and 52.8% on SWE-Bench Pro. MAI reports that collapses needing a reset became less frequent as Rocket improved. Rocket now post-trains MAI Base 2 (2.8T total, 80B active parameters).</p>
+        </section>
+
+        <section>
+          <h2>4. How the top labs compare</h2>
+          <p>Based on public papers and posts as of November 26, 2026. "Not disclosed" means no public detail was found.</p>
+          <div class="article-table-wrap">
+            <table class="article-table article-table--wide">
+              <thead>
+                <tr>
+                  <th>Lab / system</th>
+                  <th>Design</th>
+                  <th>Staleness and async</th>
+                  <th>Sampler&ndash;learner numerics</th>
+                  <th>Fault tolerance</th>
+                  <th>Published hard data</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>MAI &mdash; Rocket</td>
+                  <td>Six-role split: CPU controller, problem and rollout workers; GPU sampler (adapted SGLang) and learner; shared rollout store. Kubernetes/Slurm + Ray.</td>
+                  <td>Async; weights every 4 steps (lag 0&ndash;3); ~15 s sync; failed rollouts dropped to unblock GRPO groups.</td>
+                  <td>Bitwise parity on same checkpoint and input; MXFP8 storage with BF16 math for MoE.</td>
+                  <td>Controller + learner recovery checkpoints; live reallocation and data-mix changes; spare GPUs per rack.</td>
+                  <td>~2.595M GPU-hours saved (est.); 4,864 GB300 RL job; 128K rollouts; months-long climbs from base model.</td>
+                </tr>
+                <tr>
+                  <td>Meta &mdash; LlamaRL</td>
+                  <td>Single-controller design in native PyTorch, no Ray; separate executors for generation, reward and training.</td>
+                  <td>Async off-policy training; distributed direct memory access for weight sync.</td>
+                  <td>Generators in FP8/FP4, trainers in BF16; no parity claim found.</td>
+                  <td>Not disclosed</td>
+                  <td>Up to 10.7&times; faster RL steps vs DeepSpeed-Chat-style systems on a 405B model; 8B&ndash;405B on thousands of H100s.</td>
+                </tr>
+                <tr>
+                  <td>Google DeepMind &mdash; Pathways</td>
+                  <td>Single-controller runtime that trains and serves Gemini on TPUs; supports multi-program RL loops.</td>
+                  <td>Not disclosed for Gemini RL.</td>
+                  <td>Not disclosed.</td>
+                  <td>Elastic fault tolerance in the runtime.</td>
+                  <td>Over 130M TPU chip-hours run on Cloud Pathways in 90 days; no Gemini RL run metrics found.</td>
+                </tr>
+                <tr>
+                  <td>OpenAI</td>
+                  <td>Not disclosed. States that scaling general-purpose RL drives o-series gains.</td>
+                  <td>Not disclosed.</td>
+                  <td>Not disclosed.</td>
+                  <td>Focus on securing training sandboxes (containment, isolation).</td>
+                  <td>No RL infrastructure metrics found.</td>
+                </tr>
+                <tr>
+                  <td>Anthropic</td>
+                  <td>Not disclosed. Trains on AWS Trainium, Google TPUs and NVIDIA GPUs.</td>
+                  <td>Not disclosed.</td>
+                  <td>Not disclosed.</td>
+                  <td>Not disclosed.</td>
+                  <td>Over 1M Trainium2 chips used to train and serve Claude; no RL infrastructure metrics found.</td>
+                </tr>
+                <tr>
+                  <td>Open source &mdash; verl, slime, Laminar</td>
+                  <td>Shared foundations MAI builds on conceptually; Laminar fully decouples rollout, buffer, training and weight relay.</td>
+                  <td>Laminar: trajectory-level async, relay workers for weight sync.</td>
+                  <td>Varies; FP8/MXFP8 RL recipes emerging.</td>
+                  <td>Laminar isolates failures between parts.</td>
+                  <td>Laminar: up to 5.48&times; throughput on 1,024 GPUs.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top: 14px;"><strong>Where MAI stands out:</strong> Meta and the open-source community publish fast async designs, and Google has a strong general runtime. MAI is the only top lab here that has published end-to-end RL system numbers for long climbs together: weight-sync time, policy lag, bitwise numerical parity and GPU-hours saved by recovery. OpenAI and Anthropic have not shared comparable detail.</p>
+        </section>
+
+        <section>
+          <h2>5. Why it matters</h2>
+          <ul>
+            <li><strong>Steady climbs:</strong> exact numerics and low staleness keep thousands of updates pointed the right way.</li>
+            <li><strong>Less waste:</strong> recovery without restarts turns failures into short pauses, not lost days.</li>
+            <li><strong>Self-sufficiency:</strong> reaching the frontier through RL, without distilling other labs&rsquo; models, depends on infrastructure that can sustain the climb.</li>
+          </ul>
+        </section>
+
+        <section style="margin-top: 26px;">
+          <h2>Sources</h2>
+          <ul>
+            <li>Microsoft AI, RL infrastructure at Microsoft AI (Nov 23, 2026)</li>
+            <li>Microsoft AI, MAI-Thinking-1: Building a Hill-Climbing Machine (technical report)</li>
+            <li>Microsoft AI, Frontier Pre-training at Microsoft AI (Oct 15, 2026)</li>
+            <li>V. Zhong, The Training and RL Infrastructure Behind MAI-Thinking-1 (Oct 2026), summary of the report&rsquo;s systems sections</li>
+            <li>ByteWoops and Magica coverage of the Rocket post (Nov 23&ndash;24, 2026), for weight-sync, parity and GPU-hour figures</li>
+            <li>Meta, LlamaRL (<a href="https://arxiv.org/abs/2505.24034" target="_blank" rel="noopener noreferrer">arXiv:2505.24034</a>)</li>
+            <li>Google Cloud, Cloud Pathways GA (Nov 9, 2026)</li>
+            <li>OpenAI, Competitive Programming with Large Reasoning Models (<a href="https://arxiv.org/abs/2502.06807" target="_blank" rel="noopener noreferrer">arXiv:2502.06807</a>); Securing our frontier model training environment (Oct 23, 2026)</li>
+            <li>Anthropic, Anthropic and Amazon expand compute collaboration (Apr 20, 2026)</li>
+            <li>Sheng et al., Laminar (<a href="https://arxiv.org/abs/2510.12633" target="_blank" rel="noopener noreferrer">arXiv:2510.12633</a>)</li>
+          </ul>
+          <p style="margin-top: 12px; font-size: 13px; color: var(--muted);"><em>All MAI figures are MAI-reported. The 2.595M GPU-hour figure is MAI&rsquo;s own estimate for part of an RL run, assuming 6,000 GPUs.</em></p>
+        </section>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <span>Esther Xin</span>
+    <a href="../">All blogs</a>
+  </footer>
+</body>
+</html>
